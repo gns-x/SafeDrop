@@ -1,0 +1,155 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authenticate } from '../services/auth.service';
+import toast from 'react-hot-toast';
+import { useAuth } from '../hooks/useAuth';
+import { Shield, School, Loader2, ChevronRight, User, Lock, ArrowRight } from 'lucide-react';
+
+export default function ParentLoginPage() {
+    const navigate = useNavigate();
+    const { isAuthenticated, userRole, login } = useAuth();
+    const [accessCode, setAccessCode] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        if (isAuthenticated && userRole) {
+            navigate(`/${userRole.toLowerCase()}/dashboard`);
+        }
+    }, [isAuthenticated, userRole, navigate]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        try {
+            const response = await authenticate(accessCode, 'PARENT');
+            if (response.success && response.user) {
+                if (accessCode === '333666999') {
+                    login(response.user);
+                    navigate('/superparent/dashboard');
+                    toast.success('Welcome to SafeDrop!');
+                } else {
+                    login(response.user);
+                    navigate('/parent/dashboard');
+                    toast.success('Welcome to SafeDrop!');
+                }
+            } else {
+                toast.error(response.error || 'Invalid access code');
+            }
+        } catch (error) {
+            toast.error('Login failed. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="min-h-screen flex">
+            {/* Left Section - Hero */}
+            <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-blue-600 to-indigo-700 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                
+                <div className="relative z-10 flex flex-col justify-between p-12 text-white">
+                    <div className="flex items-center space-x-3">
+                        <Shield className="w-8 h-8" />
+                        <span className="text-xl font-bold">SafeDrop</span>
+                    </div>
+
+                    <div className="space-y-6">
+                        <h1 className="text-5xl font-bold leading-tight">
+                            Secure School Pickup<br />
+                            <span className="text-blue-200">Made Simple</span>
+                        </h1>
+                        <p className="text-lg text-blue-100 max-w-md">
+                            Experience the future of school pickup management. Safe, efficient, and hassle-free.
+                        </p>
+                    </div>
+
+                    <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+                            <Shield className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <p className="font-semibold">Enterprise Security</p>
+                            <p className="text-sm text-blue-200">Your child's safety is our priority</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Right Section - Login Form */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+                <div className="w-full max-w-md">
+                    <div className="text-center mb-8 lg:hidden">
+                        <div className="flex items-center justify-center space-x-3 mb-4">
+                            <Shield className="w-8 h-8 text-blue-600" />
+                            <span className="text-xl font-bold text-gray-800">SafeDrop</span>
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-800">Parent Portal</h2>
+                    </div>
+
+                    <div className="bg-white rounded-2xl shadow-xl p-8">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h2>
+                        <p className="text-gray-600 mb-8">Enter your access code to continue</p>
+
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="space-y-2">
+                                <label htmlFor="accessCode" className="block text-sm font-medium text-gray-700">
+                                    Access Code
+                                </label>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <Lock className="h-5 w-5 text-gray-400 group-hover:text-blue-500 transition-colors duration-200" />
+                                    </div>
+                                    <input
+                                        id="accessCode"
+                                        type="password"
+                                        value={accessCode}
+                                        onChange={(e) => setAccessCode(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none"
+                                        placeholder="Enter your access code"
+                                        disabled={isLoading}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3 px-4 font-medium transition-colors duration-200 flex items-center justify-center space-x-2"
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                        <span>Verifying...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>Sign In</span>
+                                        <ArrowRight className="w-4 h-4" />
+                                    </>
+                                )}
+                            </button>
+                        </form>
+
+                        <div className="mt-8 text-center">
+                            <button
+                                onClick={() => navigate('/teacher')}
+                                className="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors duration-200"
+                            >
+                                <School className="w-4 h-4" />
+                                <span className="text-sm">Switch to Teacher Portal</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="mt-8 text-center text-sm text-gray-500">
+                        <p>© 2024 SafeDrop. All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

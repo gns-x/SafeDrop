@@ -1,0 +1,269 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
+  name     String
+  role     Role   @default(STAFF)
+}
+
+model Student {
+  id                String              @id @default(cuid())
+  name              String
+  cardId            String              @unique @default("0000000000")
+  email             String
+  grade             String
+  balance           Float               @default(0)
+  externalCode      String              @unique @default("defaultCode")
+  parentId          String?
+  photo             String?
+  teacherId         String?
+  dateOfBirth       DateTime?           @db.Date
+  gender            String?
+  Section           String?
+  PaymentPlan       PaymentPlan?
+  PickupRecord      PickupRecord[]
+  ServiceEnrollment ServiceEnrollment[]
+  parent            Parent?             @relation(fields: [parentId], references: [id])
+  teacher           Teacher?            @relation(fields: [teacherId], references: [id])
+  Subscription      Subscription[]
+  Transaction       Transaction[]
+}
+
+model Parent {
+  id                String              @id @default(cuid())
+  accessCode        String              @unique
+  name              String
+  email             String
+  phone             String
+  address           String
+  occupation        String?
+  PaymentMethod     PaymentMethod[]
+  PickupRecord      PickupRecord[]
+  ServiceEnrollment ServiceEnrollment[]
+  students          Student[]
+}
+
+model Teacher {
+  id         String    @id @default(cuid())
+  name       String
+  grade      String
+  accessCode String    @unique
+  students   Student[]
+}
+
+model Service {
+  id               String              @id @default(cuid())
+  name             String
+  description      String
+  category         ServiceCategory
+  baseCost         Float
+  billingFrequency BillingFrequency
+  isActive         Boolean             @default(true)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  enrollments      ServiceEnrollment[]
+}
+
+model ServiceEnrollment {
+  id              String           @id @default(cuid())
+  serviceId       String
+  studentId       String
+  parentId        String
+  startDate       DateTime
+  endDate         DateTime?
+  status          EnrollmentStatus @default(ACTIVE)
+  customPrice     Float?
+  billingCycle    BillingCycle
+  autoRenew       Boolean          @default(false)
+  lastBilledDate  DateTime?
+  nextBillingDate DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  parent          Parent           @relation(fields: [parentId], references: [id])
+  service         Service          @relation(fields: [serviceId], references: [id])
+  student         Student          @relation(fields: [studentId], references: [id])
+  payments        ServicePayment[]
+}
+
+model ServicePayment {
+  id              String            @id @default(cuid())
+  enrollmentId    String
+  amount          Float
+  paymentDate     DateTime
+  paymentMethodId String
+  status          PaymentStatus
+  transactionId   String?
+  createdAt       DateTime          @default(now())
+  enrollment      ServiceEnrollment @relation(fields: [enrollmentId], references: [id])
+  paymentMethod   PaymentMethod     @relation(fields: [paymentMethodId], references: [id])
+}
+
+model PaymentMethod {
+  id             String           @id @default(cuid())
+  parentId       String
+  type           PaymentType
+  provider       String?
+  accountNumber  String?
+  expiryDate     DateTime?
+  isDefault      Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  parent         Parent           @relation(fields: [parentId], references: [id])
+  ServicePayment ServicePayment[]
+}
+
+model PaymentPlan {
+  id           String          @id @default(cuid())
+  studentId    String          @unique
+  planType     PaymentPlanType
+  installments Int
+  totalAmount  Float
+  paidAmount   Float           @default(0)
+  startDate    DateTime
+  endDate      DateTime
+  status       PlanStatus      @default(ACTIVE)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  student      Student         @relation(fields: [studentId], references: [id])
+}
+
+model PickupRecord {
+  id        String       @id @default(cuid())
+  studentId String
+  parentId  String
+  status    PickupStatus
+  timestamp DateTime     @default(now())
+  location  Json?
+  parent    Parent       @relation(fields: [parentId], references: [id])
+  student   Student      @relation(fields: [studentId], references: [id])
+}
+
+model Product {
+  id          String        @id
+  name        String
+  price       Float
+  category    Category      @default(FOOD)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Transaction Transaction[]
+}
+
+model Subscription {
+  id        String   @id
+  studentId String
+  type      SubType
+  amount    Float
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+  Student   Student  @relation(fields: [studentId], references: [id])
+}
+
+model Transaction {
+  id        String   @id
+  studentId String
+  productId String
+  amount    Float
+  quantity  Int
+  createdAt DateTime @default(now())
+  Product   Product  @relation(fields: [productId], references: [id])
+  Student   Student  @relation(fields: [studentId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  STAFF
+  PARENT
+  TEACHER
+}
+
+enum Category {
+  FOOD
+  BEVERAGE
+  SNACK
+}
+
+enum SubType {
+  ANNUAL
+  TERM
+}
+
+enum PickupStatus {
+  PENDING
+  PARENT_ARRIVED
+  COMPLETED
+  CANCELLED
+}
+
+enum ServiceCategory {
+  TRANSPORTATION
+  CAFETERIA
+  EXTRACURRICULAR
+  TUTORING
+  UNIFORM
+  BOOKS
+  EVENTS
+  OTHER
+}
+
+enum BillingFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+  ONE_TIME
+}
+
+enum BillingCycle {
+  ADVANCE
+  ARREARS
+}
+
+enum EnrollmentStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentType {
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_TRANSFER
+  CASH
+  CHEQUE
+  DIGITAL_WALLET
+}
+
+enum PaymentPlanType {
+  MONTHLY
+  QUARTERLY
+  SEMI_ANNUAL
+  ANNUAL
+  CUSTOM
+}
+
+enum PlanStatus {
+  ACTIVE
+  COMPLETED
+  DEFAULTED
+  CANCELLED
+}
