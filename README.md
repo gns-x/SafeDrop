@@ -75,7 +75,7 @@ A comprehensive, real-time school pickup management system built with React, Typ
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/safedrop.git
+git clone https://github.com/gns-x/SafeDrop.git
 ```
 
 2. Install dependencies:
@@ -152,10 +152,6 @@ Detailed documentation for each component and service is available in their resp
 3. Commit your changes
 4. Push to the branch
 5. Create a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
