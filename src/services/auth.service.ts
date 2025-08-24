@@ -1,34 +1,56 @@
 import { apiService } from "./api.service";
 import { Role, AuthResponse } from "../types/auth";
 
+interface LoginPayload {
+  accessCode: string;
+}
+
+interface LoginResponse {
+  access_token: string;
+  user: User;
+}
+
+interface BackendError {
+  message?: string;
+  error?: string;
+}
+
+interface BackendErrorResponse {
+  data: BackendError;
+}
+
+interface BackendErrorWithResponse {
+  response: BackendErrorResponse;
+}
+
 export async function authenticate(
   accessCode: string,
   role: Role,
 ): Promise<AuthResponse> {
   try {
     let endpoint: string;
-    let payload: any;
-    
+    let payload: LoginPayload;
+
     switch (role) {
-      case 'PARENT':
-        endpoint = '/auth/parent-login';
+      case "PARENT":
+        endpoint = "/auth/parent-login";
         payload = { accessCode };
         break;
-      case 'TEACHER':
-        endpoint = '/auth/teacher-login';
+      case "TEACHER":
+        endpoint = "/auth/teacher-login";
         payload = { accessCode };
         break;
       default:
         throw new Error(`Unsupported role: ${role}`);
     }
-    
-    const response = await apiService.post<any>(endpoint, payload);
-    
+
+    const response = await apiService.post<LoginResponse>(endpoint, payload);
+
     // Backend returns { access_token, user } structure
     if (response.access_token && response.user) {
       // Store the access token for future API calls
-      localStorage.setItem('access_token', response.access_token);
-      
+      localStorage.setItem("access_token", response.access_token);
+
       return {
         success: true,
         user: response.user,
@@ -40,21 +62,25 @@ export async function authenticate(
         error: "Invalid response from server",
       };
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Authentication error:", error);
-    if (error.response) {
+    if (error && typeof error === "object" && "response" in error) {
       // Handle backend error responses
-      if (error.response.data.message) {
+      const backendError = error as BackendErrorWithResponse;
+      if (backendError.response.data.message) {
         return {
           success: false,
-          error: error.response.data.message,
+          error: backendError.response.data.message,
         };
       }
-      return error.response.data;
+      return {
+        success: false,
+        error: backendError.response.data.error || "Unknown error",
+      };
     }
     return {
       success: false,
-          error: "Failed to connect to the server",
+      error: "Failed to connect to the server",
     };
   }
 }
@@ -64,16 +90,16 @@ export async function authenticateAdmin(
   password: string,
 ): Promise<AuthResponse> {
   try {
-    const response = await apiService.post<any>('/auth/login', {
+    const response = await apiService.post<LoginResponse>("/auth/login", {
       email,
       password,
     });
-    
+
     // Backend returns { access_token, user } structure
     if (response.access_token && response.user) {
       // Store the access token for future API calls
-      localStorage.setItem('access_token', response.access_token);
-      
+      localStorage.setItem("access_token", response.access_token);
+
       return {
         success: true,
         user: response.user,
@@ -85,17 +111,21 @@ export async function authenticateAdmin(
         error: "Invalid response from server",
       };
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Admin authentication error:", error);
-    if (error.response) {
+    if (error && typeof error === "object" && "response" in error) {
       // Handle backend error responses
-      if (error.response.data.message) {
+      const backendError = error as BackendErrorWithResponse;
+      if (backendError.response.data.message) {
         return {
           success: false,
-          error: error.response.data.message,
+          error: backendError.response.data.message,
         };
       }
-      return error.response.data;
+      return {
+        success: false,
+        error: backendError.response.data.error || "Unknown error",
+      };
     }
     return {
       success: false,
