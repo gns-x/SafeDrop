@@ -1,20 +1,20 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import UnifiedLoginPage from './pages/UnifiedLoginPage';
-import ParentDashboard from './pages/ParentDashboard';
-import TeacherDashboard from './pages/TeacherDashboard';
-import StudentStatusDashboard from './pages/StudentStatusDashboard';
-import AdminDashboard from './pages/AdminDashboard';
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import UnifiedLoginPage from "./pages/UnifiedLoginPage";
+import ParentDashboard from "./pages/ParentDashboard";
+import TeacherDashboard from "./pages/TeacherDashboard";
+import StudentStatusDashboard from "./pages/StudentStatusDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 
-import { useAuth } from './hooks/useAuth';
+import { useAuth } from "./hooks/useAuth";
 
 function PrivateRoute({
   children,
   allowedRole,
 }: {
   children: React.ReactNode;
-  allowedRole: 'PARENT' | 'TEACHER' | 'ADMIN';
+  allowedRole: "PARENT" | "TEACHER" | "ADMIN";
 }) {
   const { isAuthenticated, userRole } = useAuth();
 
