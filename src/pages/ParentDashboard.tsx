@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Student } from '../types/auth';
-import { Location } from '../types/location';
+import { Location, SchoolLocation } from '../types/location';
 import { SCHOOL_LOCATION } from '../config/constants';
 import { getStudentsByUser } from '../services/student.service';
 import { getCurrentLocation } from '../services/location.service';
@@ -10,11 +10,15 @@ import { Header } from '../components/dashboard/Header';
 import { DashboardStats } from '../components/dashboard/DashboardStats';
 import { StudentCard } from '../components/dashboard/StudentCard';
 import { ParentNotification } from '../components/notifications/ParentNotification';
+import { SchoolLocationUpdater } from '../components/dashboard/SchoolLocationUpdater';
+import { LocationHistory } from '../components/dashboard/LocationHistory';
 import { websocketService } from '../services/websocket.service';
 import { useAuth } from '../hooks/useAuth';
+import { locationManagementService, LocationHistoryEntry } from '../services/location-management.service';
+import { Button } from '../components/ui/button';
 import toast from 'react-hot-toast';
 import useSound from 'use-sound';
-import { Users } from 'lucide-react';
+import { Users, Settings } from 'lucide-react';
 
 const notificationSound = '/notification.mp3';
 
@@ -28,6 +32,10 @@ export default function ParentDashboard() {
   const [notification, setNotification] = useState<string | null>(null);
   const [playSound] = useSound(notificationSound);
   const [studentsLoaded, setStudentsLoaded] = useState(false);
+  const [currentSchoolLocation, setCurrentSchoolLocation] = useState<SchoolLocation>(SCHOOL_LOCATION);
+  const [locationHistory, setLocationHistory] = useState<LocationHistoryEntry[]>([]);
+  const [isLoadingLocationHistory, setIsLoadingLocationHistory] = useState(false);
+  const [showLocationSettings, setShowLocationSettings] = useState(false);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -88,9 +96,9 @@ export default function ParentDashboard() {
     if (!location) return false;
     const distance = getDistance(
       { latitude: location.latitude, longitude: location.longitude },
-      { latitude: SCHOOL_LOCATION.latitude, longitude: SCHOOL_LOCATION.longitude }
+      { latitude: currentSchoolLocation.latitude, longitude: currentSchoolLocation.longitude }
     );
-    return distance <= SCHOOL_LOCATION.radius;
+    return distance <= currentSchoolLocation.radius;
   };
 
   const handleGetLocation = async () => {
@@ -128,6 +136,67 @@ export default function ParentDashboard() {
     }
   };
 
+  const handleLocationUpdate = async (newLocation: SchoolLocation) => {
+    try {
+      // Use mock service for now - replace with real API call when backend is ready
+      const response = await locationManagementService.mockUpdateSchoolLocation(newLocation, userId || 'unknown');
+      
+      if (response.success) {
+        setCurrentSchoolLocation(newLocation);
+        // Add to history
+        const historyEntry: LocationHistoryEntry = {
+          id: Date.now().toString(),
+          latitude: newLocation.latitude,
+          longitude: newLocation.longitude,
+          radius: newLocation.radius,
+          updatedBy: response.updatedBy,
+          updatedAt: response.updatedAt,
+          reason: newLocation.reason,
+        };
+        setLocationHistory(prev => [historyEntry, ...prev]);
+        toast.success('School location updated successfully! 🎉');
+      }
+    } catch (error) {
+      toast.error('Failed to update school location');
+    }
+  };
+
+  const loadLocationHistory = async () => {
+    setIsLoadingLocationHistory(true);
+    try {
+      // For now, we'll use mock data - replace with real API call when backend is ready
+      const mockHistory: LocationHistoryEntry[] = [
+        {
+          id: '1',
+          latitude: 33.50148021702571,
+          longitude: -7.6367796029366675,
+          radius: 500,
+          updatedBy: 'Admin User',
+          updatedAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+          reason: 'Initial school location setup'
+        },
+        {
+          id: '2',
+          latitude: 33.50148021702571,
+          longitude: -7.6367796029366675,
+          radius: 400,
+          updatedBy: 'School Principal',
+          updatedAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+          reason: 'Reduced pickup radius for safety'
+        }
+      ];
+      setLocationHistory(mockHistory);
+    } catch (error) {
+      toast.error('Failed to load location history');
+    } finally {
+      setIsLoadingLocationHistory(false);
+    }
+  };
+
+  useEffect(() => {
+    loadLocationHistory();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       <Header
@@ -152,6 +221,36 @@ export default function ParentDashboard() {
           currentLocation={currentLocation}
           onGetLocation={handleGetLocation}
         />
+
+        {/* Location Management Section */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">School Location Management</h2>
+              <p className="text-gray-600 mt-1">Configure pickup zones and safety parameters</p>
+            </div>
+            <Button
+              onClick={() => setShowLocationSettings(!showLocationSettings)}
+              className="px-6 py-3 rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 flex items-center space-x-2 bg-white text-gray-700 hover:bg-blue-50"
+            >
+              <Settings className="w-4 h-4" />
+              <span>{showLocationSettings ? 'Hide Settings' : 'Show Settings'}</span>
+            </Button>
+          </div>
+
+          {showLocationSettings && (
+            <div className="space-y-6">
+              <SchoolLocationUpdater
+                onLocationUpdate={handleLocationUpdate}
+                currentLocation={currentSchoolLocation}
+              />
+              <LocationHistory
+                history={locationHistory}
+                isLoading={isLoadingLocationHistory}
+              />
+            </div>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {students.map((student) => (
