@@ -1,34 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { Student } from '../types/auth';
-import { Location } from '../types/location';
-import { getStudentsByUser, getStudentDetails } from '../services/student.service';
-import { Search } from 'lucide-react';
-import { StudentCard } from '../components/dashboard/StudentCard';
-import toast from 'react-hot-toast';
+import React, { useEffect, useState } from "react";
+import { Student } from "../types/auth";
+import { Location } from "../types/location";
+import {
+  getStudentsByUser,
+  getStudentDetails,
+} from "../services/student.service";
+import { Search } from "lucide-react";
+import { StudentCard } from "../components/dashboard/StudentCard";
+import toast from "react-hot-toast";
 
 export default function TheBloodThirsty() {
   const [allStudents, setAllStudents] = useState<Student[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-  const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
+  const [currentLocation] = useState<Location | null>(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
-  const userId = localStorage.getItem('userId') || '';
+  const userId = localStorage.getItem("userId") || "";
 
   useEffect(() => {
     const loadStudents = async () => {
       try {
-        const data = await getStudentsByUser(userId, 'PARENT');
+        const data = await getStudentsByUser(userId, "PARENT");
         setAllStudents(data);
-      } catch (error) {
-        toast.error('Failed to load students');
+      } catch {
+        toast.error("Failed to load students");
       }
     };
 
     loadStudents();
   }, [userId]);
 
-  const filteredStudents = allStudents.filter(student =>
-    student.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredStudents = allStudents.filter((student) =>
+    student.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleStudentSelect = async (student: Student) => {
@@ -36,9 +39,9 @@ export default function TheBloodThirsty() {
     try {
       const detailedStudent = await getStudentDetails(student.id);
       setSelectedStudent(detailedStudent);
-      setSearchQuery('');
-    } catch (error) {
-      toast.error('Failed to load student details');
+      setSearchQuery("");
+    } catch {
+      toast.error("Failed to load student details");
       setSelectedStudent(null);
     } finally {
       setIsLoadingDetails(false);
@@ -92,8 +95,12 @@ export default function TheBloodThirsty() {
                       )}
                     </div>
                     <div className="flex-1 text-left">
-                      <h3 className="text-lg font-medium text-gray-900">{student.name}</h3>
-                      <p className="text-sm text-gray-500">Grade {student.grade}</p>
+                      <h3 className="text-lg font-medium text-gray-900">
+                        {student.name}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        Grade {student.grade}
+                      </p>
                     </div>
                   </button>
                 ))}
