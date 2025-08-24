@@ -58,3 +58,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Backend (separate repository)
 backend/
+
+# Local Netlify folder
+.netlify
