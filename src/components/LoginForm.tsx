@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { KeyRound, School, Users } from 'lucide-react';
-import { LoginFormData } from '../types/auth';
-import { authenticate } from '../services/auth.service';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { KeyRound, School, Users } from "lucide-react";
+import { LoginFormData } from "../types/auth";
+import { authenticate } from "../services/auth.service";
+import toast from "react-hot-toast";
 
 export default function LoginForm() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<LoginFormData>({
-    accessCode: '',
-    role: 'PARENT'
+    accessCode: "",
+    role: "PARENT",
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,16 +21,16 @@ export default function LoginForm() {
       const response = await authenticate(formData.accessCode, formData.role);
 
       if (response.success && response.user) {
-        localStorage.setItem('userId', response.user.id);
-        localStorage.setItem('userRole', response.user.role);
-        localStorage.setItem('userName', response.user.name);
-        navigate('/parentdashboard');
-        toast.success('Login successful!');
+        localStorage.setItem("userId", response.user.id);
+        localStorage.setItem("userRole", response.user.role);
+        localStorage.setItem("userName", response.user.name);
+        navigate("/parentdashboard");
+        toast.success("Login successful!");
       } else {
-        toast.error(response.error || 'Invalid access code');
+        toast.error(response.error || "Invalid access code");
       }
-    } catch (error) {
-      toast.error('Login failed. Please try again.');
+    } catch {
+      toast.error("Login failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -42,7 +42,9 @@ export default function LoginForm() {
         <div className="text-center mb-8">
           <School className="w-12 h-12 text-indigo-600 mx-auto mb-4" />
           <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
-          <p className="text-gray-600 mt-2">Please enter your access code to continue</p>
+          <p className="text-gray-600 mt-2">
+            Please enter your access code to continue
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -53,11 +55,13 @@ export default function LoginForm() {
             <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
-                onClick={() => setFormData(prev => ({ ...prev, role: 'PARENT' }))}
+                onClick={() =>
+                  setFormData((prev) => ({ ...prev, role: "PARENT" }))
+                }
                 className={`p-4 rounded-lg border ${
-                  formData.role === 'PARENT'
-                    ? 'border-indigo-600 bg-indigo-50 text-indigo-600'
-                    : 'border-gray-200 hover:border-indigo-600 hover:bg-indigo-50'
+                  formData.role === "PARENT"
+                    ? "border-indigo-600 bg-indigo-50 text-indigo-600"
+                    : "border-gray-200 hover:border-indigo-600 hover:bg-indigo-50"
                 } transition-all duration-200`}
                 disabled={isLoading}
               >
@@ -66,11 +70,13 @@ export default function LoginForm() {
               </button>
               <button
                 type="button"
-                onClick={() => setFormData(prev => ({ ...prev, role: 'TEACHER' }))}
+                onClick={() =>
+                  setFormData((prev) => ({ ...prev, role: "TEACHER" }))
+                }
                 className={`p-4 rounded-lg border ${
-                  formData.role === 'TEACHER'
-                    ? 'border-indigo-600 bg-indigo-50 text-indigo-600'
-                    : 'border-gray-200 hover:border-indigo-600 hover:bg-indigo-50'
+                  formData.role === "TEACHER"
+                    ? "border-indigo-600 bg-indigo-50 text-indigo-600"
+                    : "border-gray-200 hover:border-indigo-600 hover:bg-indigo-50"
                 } transition-all duration-200`}
                 disabled={isLoading}
               >
@@ -81,7 +87,10 @@ export default function LoginForm() {
           </div>
 
           <div>
-            <label htmlFor="accessCode" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="accessCode"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Access Code
             </label>
             <div className="relative">
@@ -90,7 +99,12 @@ export default function LoginForm() {
                 id="accessCode"
                 type="password"
                 value={formData.accessCode}
-                onChange={(e) => setFormData(prev => ({ ...prev, accessCode: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    accessCode: e.target.value,
+                  }))
+                }
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Enter your access code"
                 required
@@ -104,7 +118,7 @@ export default function LoginForm() {
             className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-200 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
-            {isLoading ? 'Logging in...' : 'Login'}
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>
