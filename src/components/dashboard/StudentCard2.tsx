@@ -17,16 +17,17 @@ import {
 } from "../../services/location.service";
 import toast from "react-hot-toast";
 import { getDistance } from "geolib";
-import { SCHOOL_LOCATION } from "../../config/constants";
+
 
 interface StudentCardProps {
   student: Student;
   currentLocation: Location | null;
   onRequestPickup: () => void;
   isWithinRange: boolean;
+  schoolLocation: SchoolLocation;
 }
 
-export function StudentCard2({ student, onRequestPickup }: StudentCardProps) {
+export function StudentCard2({ student, onRequestPickup, schoolLocation }: StudentCardProps) {
   const [isRequesting, setIsRequesting] = useState(false);
   const [hasRequested, setHasRequested] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -59,14 +60,14 @@ export function StudentCard2({ student, onRequestPickup }: StudentCardProps) {
       const distance = getDistance(
         { latitude: location.latitude, longitude: location.longitude },
         {
-          latitude: SCHOOL_LOCATION.latitude,
-          longitude: SCHOOL_LOCATION.longitude,
+          latitude: schoolLocation.latitude,
+          longitude: schoolLocation.longitude,
         },
       );
 
-      setIsWithinRange(distance <= SCHOOL_LOCATION.radius);
+      setIsWithinRange(distance <= schoolLocation.radius);
 
-      if (distance <= SCHOOL_LOCATION.radius) {
+      if (distance <= schoolLocation.radius) {
         await handlePickupRequest(location);
       } else {
         toast.error("You must be within school range to request pickup");

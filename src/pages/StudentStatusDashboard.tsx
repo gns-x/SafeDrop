@@ -5,6 +5,7 @@ import { getStudentsByUser } from "../services/student.service";
 import { Header } from "../components/dashboard/Header";
 import { StudentStatusCard2 } from "../components/dashboard/StudentStatusCard2";
 import { StudentCard2 } from "../components/dashboard/StudentCard2";
+import { SCHOOL_LOCATION } from "../config/constants";
 import toast from "react-hot-toast";
 import { Users, ArrowLeft, Search, X } from "lucide-react";
 
@@ -175,6 +176,7 @@ export default function StudentStatusDashboard() {
               currentLocation={null}
               onRequestPickup={handleRequestPickup}
               isWithinRange={false}
+              schoolLocation={SCHOOL_LOCATION}
             />
           </div>
         )}

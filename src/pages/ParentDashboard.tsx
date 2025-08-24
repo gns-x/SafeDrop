@@ -243,6 +243,7 @@ export default function ParentDashboard() {
               currentLocation={null} // currentLocation is removed
               onRequestPickup={() => handleRequestPickup()}
               isWithinRange={isWithinRange(null)} // currentLocation is removed
+              schoolLocation={currentSchoolLocation || SCHOOL_LOCATION}
             />
           ))}
         </div>

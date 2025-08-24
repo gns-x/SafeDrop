@@ -3,7 +3,17 @@ import { Location, PickupRequest } from "../types/location";
 
 export async function sendPickupRequest(request: PickupRequest): Promise<void> {
   try {
-    await apiService.post("/pickup/request", request);
+    // Transform the request to match backend DTO format
+    const backendRequest = {
+      studentId: request.studentId,
+      parentId: request.parentId,
+      location: {
+        lat: request.location.latitude,
+        lng: request.location.longitude,
+      },
+    };
+
+    await apiService.post("/pickups", backendRequest);
   } catch {
     throw new Error("Failed to send pickup request");
   }

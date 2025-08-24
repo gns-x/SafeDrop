@@ -85,29 +85,63 @@ export function SchoolLocationUpdater({
 
   const handleGetCurrentLocation = async () => {
     setIsLoading(true);
+    
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by this browser.");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setFormData((prev) => ({
-              ...prev,
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            }));
-            toast.success("Current location captured successfully!");
-          },
-          () => {
-            toast.error(
-              "Failed to get current location. Please check permissions.",
-            );
-          },
-        );
-      } else {
-        toast.error("Geolocation is not supported by this browser.");
+      // Check permission state first
+      const permission = await navigator.permissions.query({
+        name: "geolocation",
+      });
+      
+      if (permission.state === "denied") {
+        toast.error("Location permission denied. Please enable location services in your browser settings.");
+        setIsLoading(false);
+        return;
       }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFormData((prev) => ({
+            ...prev,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          }));
+          toast.success("Current location captured successfully!");
+          setIsLoading(false);
+        },
+        (error) => {
+          let errorMessage = "Failed to get current location.";
+          
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage = "Location permission denied.";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = "Location information unavailable.";
+              break;
+            case error.TIMEOUT:
+              errorMessage = "Location request timed out.";
+              break;
+            default:
+              errorMessage = "Unknown location error occurred.";
+          }
+          
+          toast.error(errorMessage);
+          setIsLoading(false);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000
+        }
+      );
     } catch {
-      toast.error("Error getting location");
-    } finally {
+      toast.error("Error checking location permissions");
       setIsLoading(false);
     }
   };
