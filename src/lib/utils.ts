@@ -65,3 +65,4 @@ export function getStatusColor(status: string): {
 export function generateGradient(colors: string[]): string {
   return `linear-gradient(135deg, ${colors.join(", ")})`;
 }
+// Enhanced error handling utilities
