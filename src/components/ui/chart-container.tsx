@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { LucideIcon } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import { LucideIcon } from "lucide-react";
+import { cn } from "../../lib/utils";
 
 interface ChartContainerProps {
   title: string;
@@ -9,7 +9,7 @@ interface ChartContainerProps {
   icon?: LucideIcon;
   children: React.ReactNode;
   className?: string;
-  variant?: 'default' | 'glass' | 'gradient';
+  variant?: "default" | "glass" | "gradient";
   actions?: React.ReactNode;
   loading?: boolean;
 }
@@ -20,14 +20,15 @@ const ChartContainer: React.FC<ChartContainerProps> = ({
   icon: Icon,
   children,
   className,
-  variant = 'default',
+  variant = "default",
   actions,
-  loading = false
+  loading = false,
 }) => {
   const variants = {
-    default: 'bg-white border border-gray-200 shadow-lg',
-    glass: 'bg-white/80 backdrop-blur-xl border border-white/20 shadow-xl',
-    gradient: 'bg-gradient-to-br from-white via-gray-50 to-gray-100 border border-gray-200 shadow-xl'
+    default: "bg-white border border-gray-200 shadow-lg",
+    glass: "bg-white/80 backdrop-blur-xl border border-white/20 shadow-xl",
+    gradient:
+      "bg-gradient-to-br from-white via-gray-50 to-gray-100 border border-gray-200 shadow-xl",
   };
 
   if (loading) {
@@ -36,9 +37,9 @@ const ChartContainer: React.FC<ChartContainerProps> = ({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className={cn(
-          'rounded-2xl p-6 transition-all duration-300',
+          "rounded-2xl p-6 transition-all duration-300",
           variants[variant],
-          className
+          className,
         )}
       >
         <div className="animate-pulse space-y-4">
@@ -65,9 +66,9 @@ const ChartContainer: React.FC<ChartContainerProps> = ({
       whileHover={{ y: -2 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        'rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl relative',
+        "rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl relative",
         variants[variant],
-        className
+        className,
       )}
     >
       {/* Header */}
@@ -84,12 +85,10 @@ const ChartContainer: React.FC<ChartContainerProps> = ({
           )}
           <div>
             <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-            {subtitle && (
-              <p className="text-sm text-gray-600">{subtitle}</p>
-            )}
+            {subtitle && <p className="text-sm text-gray-600">{subtitle}</p>}
           </div>
         </div>
-        
+
         {actions && (
           <motion.div
             initial={{ opacity: 0, x: 20 }}
