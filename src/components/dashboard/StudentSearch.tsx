@@ -1,20 +1,28 @@
-import React, { useState, useCallback } from 'react';
-import { Search } from 'lucide-react';
-import debounce from 'lodash/debounce';
+import React, { useState, useCallback, useRef } from "react";
+import { Search } from "lucide-react";
 
 interface StudentSearchProps {
   onSearch: (query: string) => void;
   isLargeAccount: boolean;
 }
 
-export function StudentSearch({ onSearch, isLargeAccount }: StudentSearchProps) {
-  const [searchTerm, setSearchTerm] = useState('');
+export function StudentSearch({
+  onSearch,
+  isLargeAccount,
+}: StudentSearchProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   const debouncedSearch = useCallback(
-    debounce((query: string) => {
-      onSearch(query);
-    }, 300),
-    [onSearch]
+    (query: string) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        onSearch(query);
+      }, 300);
+    },
+    [onSearch],
   );
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {

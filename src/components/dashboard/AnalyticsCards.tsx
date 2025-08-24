@@ -1,5 +1,5 @@
-import React from 'react';
-import { Users, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import React from "react";
+import { Users, Clock, CheckCircle, AlertCircle } from "lucide-react";
 
 interface AnalyticsCardsProps {
   analytics: {
@@ -13,28 +13,28 @@ interface AnalyticsCardsProps {
 const AnalyticsCards = ({ analytics }: AnalyticsCardsProps) => {
   const cards = [
     {
-      title: 'Total Students',
+      title: "Total Students",
       value: analytics.totalStudents,
       icon: Users,
-      color: 'bg-blue-500',
+      color: "bg-blue-500",
     },
     {
       title: "Today's Pickups",
       value: analytics.todayPickups,
       icon: Clock,
-      color: 'bg-green-500',
+      color: "bg-green-500",
     },
     {
-      title: 'Pending Pickups',
+      title: "Pending Pickups",
       value: analytics.pendingPickups,
       icon: AlertCircle,
-      color: 'bg-yellow-500',
+      color: "bg-yellow-500",
     },
     {
-      title: 'Completed Pickups',
+      title: "Completed Pickups",
       value: analytics.completedPickups,
       icon: CheckCircle,
-      color: 'bg-purple-500',
+      color: "bg-purple-500",
     },
   ];
 
@@ -48,7 +48,7 @@ const AnalyticsCards = ({ analytics }: AnalyticsCardsProps) => {
           <div className="flex items-center justify-between mb-4">
             <div className={`p-3 rounded-lg ${card.color} bg-opacity-10`}>
               <card.icon
-                className={`h-6 w-6 ${card.color.replace('bg-', 'text-')}`}
+                className={`h-6 w-6 ${card.color.replace("bg-", "text-")}`}
               />
             </div>
           </div>

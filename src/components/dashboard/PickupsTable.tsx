@@ -1,6 +1,6 @@
-import React from 'react';
-import { format } from 'date-fns';
-import type { PickupRecord } from '../../types/dashboard';
+import React from "react";
+import { format } from "date-fns";
+import type { PickupRecord } from "../../types/dashboard";
 
 interface PickupsTableProps {
   pickups: PickupRecord[];
@@ -9,14 +9,14 @@ interface PickupsTableProps {
 const PickupsTable = ({ pickups }: PickupsTableProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'in-progress':
-        return 'bg-blue-100 text-blue-800';
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "in-progress":
+        return "bg-blue-100 text-blue-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -56,19 +56,21 @@ const PickupsTable = ({ pickups }: PickupsTableProps) => {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500">{pickup.parentName}</div>
+                  <div className="text-sm text-gray-500">
+                    {pickup.parentName}
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
                     className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
-                      pickup.status
+                      pickup.status,
                     )}`}
                   >
                     {pickup.status}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {format(new Date(pickup.timestamp), 'MMM d, yyyy HH:mm')}
+                  {format(new Date(pickup.timestamp), "MMM d, yyyy HH:mm")}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {pickup.location}

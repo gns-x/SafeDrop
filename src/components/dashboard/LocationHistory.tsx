@@ -1,16 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { Clock, User, MapPin, Calendar, Eye, ChevronDown, ChevronUp } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
-import { LocationHistoryEntry } from '../../services/location-management.service';
+import React, { useState } from "react";
+import {
+  Clock,
+  User,
+  MapPin,
+  Calendar,
+  Eye,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "../ui/card";
+import { Button } from "../ui/button";
+import { LocationHistoryEntry } from "../../services/location-management.service";
 
 interface LocationHistoryProps {
   history: LocationHistoryEntry[];
   isLoading?: boolean;
 }
 
-export function LocationHistory({ history, isLoading = false }: LocationHistoryProps) {
-  const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set());
+export function LocationHistory({
+  history,
+  isLoading = false,
+}: LocationHistoryProps) {
+  const [expandedEntries, setExpandedEntries] = useState<Set<string>>(
+    new Set(),
+  );
   const [showAll, setShowAll] = useState(false);
 
   const toggleExpanded = (id: string) => {
@@ -25,12 +44,12 @@ export function LocationHistory({ history, isLoading = false }: LocationHistoryP
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -94,7 +113,7 @@ export function LocationHistory({ history, isLoading = false }: LocationHistoryP
     <Card variant="glass" className="relative overflow-hidden">
       {/* Premium gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50/50 via-gray-50/30 to-blue-50/50" />
-      
+
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(0,0,0,0.1)_1px,transparent_0)] bg-[length:20px_20px]" />
@@ -116,17 +135,17 @@ export function LocationHistory({ history, isLoading = false }: LocationHistoryP
             </div>
           </div>
           <div className="text-sm text-gray-500">
-            {history.length} update{history.length !== 1 ? 's' : ''}
+            {history.length} update{history.length !== 1 ? "s" : ""}
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="relative space-y-4">
-        {displayedHistory.map((entry, index) => (
+        {displayedHistory.map((entry) => (
           <div
             key={entry.id}
             className={`bg-white/60 backdrop-blur-sm rounded-xl border border-white/20 transition-all duration-200 hover:shadow-md ${
-              expandedEntries.has(entry.id) ? 'ring-2 ring-blue-200' : ''
+              expandedEntries.has(entry.id) ? "ring-2 ring-blue-200" : ""
             }`}
           >
             <div className="p-4">
@@ -161,27 +180,33 @@ export function LocationHistory({ history, isLoading = false }: LocationHistoryP
                     <div className="bg-blue-50/50 rounded-lg p-3">
                       <div className="flex items-center space-x-2 mb-1">
                         <MapPin className="w-4 h-4 text-blue-600" />
-                        <span className="text-xs font-medium text-blue-700">Latitude</span>
+                        <span className="text-xs font-medium text-blue-700">
+                          Latitude
+                        </span>
                       </div>
                       <p className="text-sm font-mono text-blue-900">
                         {formatCoordinate(entry.latitude)}°
                       </p>
                     </div>
-                    
+
                     <div className="bg-green-50/50 rounded-lg p-3">
                       <div className="flex items-center space-x-2 mb-1">
                         <MapPin className="w-4 h-4 text-green-600" />
-                        <span className="text-xs font-medium text-green-700">Longitude</span>
+                        <span className="text-xs font-medium text-green-700">
+                          Longitude
+                        </span>
                       </div>
                       <p className="text-sm font-mono text-green-900">
                         {formatCoordinate(entry.longitude)}°
                       </p>
                     </div>
-                    
+
                     <div className="bg-purple-50/50 rounded-lg p-3">
                       <div className="flex items-center space-x-2 mb-1">
                         <MapPin className="w-4 h-4 text-purple-600" />
-                        <span className="text-xs font-medium text-purple-700">Radius</span>
+                        <span className="text-xs font-medium text-purple-700">
+                          Radius
+                        </span>
                       </div>
                       <p className="text-sm font-mono text-purple-900">
                         {formatRadius(entry.radius)}
@@ -193,7 +218,9 @@ export function LocationHistory({ history, isLoading = false }: LocationHistoryP
                     <div className="bg-amber-50/50 rounded-lg p-3 border border-amber-200/50">
                       <div className="flex items-center space-x-2 mb-1">
                         <Eye className="w-4 h-4 text-amber-600" />
-                        <span className="text-xs font-medium text-amber-700">Update Reason</span>
+                        <span className="text-xs font-medium text-amber-700">
+                          Update Reason
+                        </span>
                       </div>
                       <p className="text-sm text-amber-800">{entry.reason}</p>
                     </div>
@@ -210,7 +237,7 @@ export function LocationHistory({ history, isLoading = false }: LocationHistoryP
               onClick={() => setShowAll(!showAll)}
               className="px-6 py-2 rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 bg-white text-gray-700 hover:bg-blue-50"
             >
-              {showAll ? 'Show Less' : `Show All ${history.length} Updates`}
+              {showAll ? "Show Less" : `Show All ${history.length} Updates`}
             </Button>
           </div>
         )}

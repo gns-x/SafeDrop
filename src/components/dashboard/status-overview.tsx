@@ -23,10 +23,7 @@ export function StatusOverview() {
                   {status.value}%
                 </span>
               </div>
-              <Progress
-                value={status.value}
-                className={status.color}
-              />
+              <Progress value={status.value} className={status.color} />
             </div>
           ))}
         </div>

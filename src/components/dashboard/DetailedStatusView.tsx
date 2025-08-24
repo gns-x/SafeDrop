@@ -1,14 +1,30 @@
-import React from 'react';
-import { Student } from '../../types/auth';
-import { ArrowLeft, Clock, GraduationCap, MapPin, Shield, User } from 'lucide-react';
+import React from "react";
+import { Student } from "../../types/auth";
+import {
+  ArrowLeft,
+  Clock,
+  GraduationCap,
+  MapPin,
+  Shield,
+  User,
+} from "lucide-react";
+
+interface StudentStatus {
+  status?: string;
+  location?: string;
+}
 
 interface DetailedStatusViewProps {
   student: Student;
-  status: any;
+  status: StudentStatus;
   onBack: () => void;
 }
 
-export function DetailedStatusView({ student, status, onBack }: DetailedStatusViewProps) {
+export function DetailedStatusView({
+  student,
+  status,
+  onBack,
+}: DetailedStatusViewProps) {
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8">
       <button
@@ -27,7 +43,9 @@ export function DetailedStatusView({ student, status, onBack }: DetailedStatusVi
         <div className="flex-1">
           <div className="flex justify-between items-start">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{student.name}</h2>
+              <h2 className="text-2xl font-bold text-gray-900">
+                {student.name}
+              </h2>
               <p className="text-gray-500 flex items-center mt-1">
                 <GraduationCap className="w-5 h-5 mr-2" />
                 Grade {student.grade}
@@ -42,15 +60,19 @@ export function DetailedStatusView({ student, status, onBack }: DetailedStatusVi
             <div className="bg-gray-50 rounded-xl p-6">
               <div className="flex items-center mb-4">
                 <Shield className="w-6 h-6 text-indigo-600 mr-2" />
-                <h3 className="text-lg font-semibold text-gray-900">Current Status</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Current Status
+                </h3>
               </div>
-              <p className="text-gray-700">{status?.status || 'Loading...'}</p>
+              <p className="text-gray-700">{status?.status || "Loading..."}</p>
             </div>
 
             <div className="bg-gray-50 rounded-xl p-6">
               <div className="flex items-center mb-4">
                 <Clock className="w-6 h-6 text-indigo-600 mr-2" />
-                <h3 className="text-lg font-semibold text-gray-900">Last Updated</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Last Updated
+                </h3>
               </div>
               <p className="text-gray-700">{new Date().toLocaleTimeString()}</p>
             </div>
@@ -58,9 +80,13 @@ export function DetailedStatusView({ student, status, onBack }: DetailedStatusVi
             <div className="bg-gray-50 rounded-xl p-6">
               <div className="flex items-center mb-4">
                 <MapPin className="w-6 h-6 text-indigo-600 mr-2" />
-                <h3 className="text-lg font-semibold text-gray-900">Location</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Location
+                </h3>
               </div>
-              <p className="text-gray-700">{status?.location || 'School Premises'}</p>
+              <p className="text-gray-700">
+                {status?.location || "School Premises"}
+              </p>
             </div>
           </div>
         </div>

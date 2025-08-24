@@ -1,13 +1,16 @@
-import React from 'react';
-import { Student } from '../../types/auth';
-import { Clock, GraduationCap, MapPin, User } from 'lucide-react';
+import React from "react";
+import { Student } from "../../types/auth";
+import { Clock, GraduationCap, MapPin } from "lucide-react";
 
 interface StudentStatusCardProps {
   student: Student;
   onSelect: (student: Student) => void;
 }
 
-export function StudentStatusCard2({ student, onSelect }: StudentStatusCardProps) {
+export function StudentStatusCard2({
+  student,
+  onSelect,
+}: StudentStatusCardProps) {
   return (
     <div
       onClick={() => onSelect(student)}

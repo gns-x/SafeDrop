@@ -1,53 +1,85 @@
-import React, { useState, useEffect } from 'react';
-import { MapPin, Save, RotateCcw, Navigation, Globe, Shield, CheckCircle, AlertCircle } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../ui/card';
-import { Button } from '../ui/button';
-import { SCHOOL_LOCATION } from '../../config/constants';
-import { SchoolLocation } from '../../types/location';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import {
+  MapPin,
+  Save,
+  RotateCcw,
+  Navigation,
+  Globe,
+  Shield,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "../ui/card";
+import { Button } from "../ui/button";
+import { SCHOOL_LOCATION } from "../../config/constants";
+import { SchoolLocation } from "../../types/location";
+import toast from "react-hot-toast";
 
 interface SchoolLocationUpdaterProps {
   onLocationUpdate: (newLocation: SchoolLocation) => void;
   currentLocation?: SchoolLocation;
 }
 
-export function SchoolLocationUpdater({ onLocationUpdate, currentLocation }: SchoolLocationUpdaterProps) {
+export function SchoolLocationUpdater({
+  onLocationUpdate,
+  currentLocation,
+}: SchoolLocationUpdaterProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<SchoolLocation>({
     latitude: currentLocation?.latitude || SCHOOL_LOCATION.latitude,
     longitude: currentLocation?.longitude || SCHOOL_LOCATION.longitude,
-    radius: currentLocation?.radius || SCHOOL_LOCATION.radius
+    radius: currentLocation?.radius || SCHOOL_LOCATION.radius,
   });
-  const [reason, setReason] = useState<string>('');
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [reason, setReason] = useState<string>("");
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
 
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
 
-    if (!formData.latitude || formData.latitude < -90 || formData.latitude > 90) {
-      errors.latitude = 'Latitude must be between -90 and 90 degrees';
+    if (
+      !formData.latitude ||
+      formData.latitude < -90 ||
+      formData.latitude > 90
+    ) {
+      errors.latitude = "Latitude must be between -90 and 90 degrees";
     }
 
-    if (!formData.longitude || formData.longitude < -180 || formData.longitude > 180) {
-      errors.longitude = 'Longitude must be between -180 and 180 degrees';
+    if (
+      !formData.longitude ||
+      formData.longitude < -180 ||
+      formData.longitude > 180
+    ) {
+      errors.longitude = "Longitude must be between -180 and 180 degrees";
     }
 
     if (!formData.radius || formData.radius < 100 || formData.radius > 5000) {
-      errors.radius = 'Radius must be between 100 and 5000 meters';
+      errors.radius = "Radius must be between 100 and 5000 meters";
     }
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  const handleInputChange = (field: keyof SchoolLocation, value: string | number) => {
-    const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
-    setFormData(prev => ({ ...prev, [field]: numValue }));
-    
+  const handleInputChange = (
+    field: keyof SchoolLocation,
+    value: string | number,
+  ) => {
+    const numValue = typeof value === "string" ? parseFloat(value) || 0 : value;
+    setFormData((prev) => ({ ...prev, [field]: numValue }));
+
     // Clear validation error for this field
     if (validationErrors[field]) {
-      setValidationErrors(prev => ({ ...prev, [field]: '' }));
+      setValidationErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
@@ -57,22 +89,24 @@ export function SchoolLocationUpdater({ onLocationUpdate, currentLocation }: Sch
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            setFormData(prev => ({
+            setFormData((prev) => ({
               ...prev,
               latitude: position.coords.latitude,
-              longitude: position.coords.longitude
+              longitude: position.coords.longitude,
             }));
-            toast.success('Current location captured successfully!');
+            toast.success("Current location captured successfully!");
           },
-          (error) => {
-            toast.error('Failed to get current location. Please check permissions.');
-          }
+          () => {
+            toast.error(
+              "Failed to get current location. Please check permissions.",
+            );
+          },
         );
       } else {
-        toast.error('Geolocation is not supported by this browser.');
+        toast.error("Geolocation is not supported by this browser.");
       }
-    } catch (error) {
-      toast.error('Error getting location');
+    } catch {
+      toast.error("Error getting location");
     } finally {
       setIsLoading(false);
     }
@@ -80,27 +114,27 @@ export function SchoolLocationUpdater({ onLocationUpdate, currentLocation }: Sch
 
   const handleSave = async () => {
     if (!validateForm()) {
-      toast.error('Please fix the validation errors');
+      toast.error("Please fix the validation errors");
       return;
     }
 
     setIsLoading(true);
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Create location data with reason
       const locationData = {
         ...formData,
-        reason: reason.trim() || undefined
+        reason: reason.trim() || undefined,
       };
-      
+
       onLocationUpdate(locationData);
       setIsEditing(false);
-      setReason(''); // Reset reason after successful update
-      toast.success('School location updated successfully! 🎉');
-    } catch (error) {
-      toast.error('Failed to update location');
+      setReason(""); // Reset reason after successful update
+      toast.success("School location updated successfully! 🎉");
+    } catch {
+      toast.error("Failed to update location");
     } finally {
       setIsLoading(false);
     }
@@ -110,7 +144,7 @@ export function SchoolLocationUpdater({ onLocationUpdate, currentLocation }: Sch
     setFormData({
       latitude: currentLocation?.latitude || SCHOOL_LOCATION.latitude,
       longitude: currentLocation?.longitude || SCHOOL_LOCATION.longitude,
-      radius: currentLocation?.radius || SCHOOL_LOCATION.radius
+      radius: currentLocation?.radius || SCHOOL_LOCATION.radius,
     });
     setValidationErrors({});
     setIsEditing(false);
@@ -131,7 +165,7 @@ export function SchoolLocationUpdater({ onLocationUpdate, currentLocation }: Sch
     <Card variant="glass" className="relative overflow-hidden">
       {/* Premium gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-indigo-50/30 to-purple-50/50" />
-      
+
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(0,0,0,0.1)_1px,transparent_0)] bg-[length:20px_20px]" />
@@ -161,27 +195,33 @@ export function SchoolLocationUpdater({ onLocationUpdate, currentLocation }: Sch
               <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20">
                 <div className="flex items-center space-x-2 mb-2">
                   <MapPin className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm font-medium text-gray-700">Latitude</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Latitude
+                  </span>
                 </div>
                 <p className="text-lg font-mono font-semibold text-gray-900">
                   {formatCoordinate(formData.latitude)}°
                 </p>
               </div>
-              
+
               <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20">
                 <div className="flex items-center space-x-2 mb-2">
                   <Navigation className="w-4 h-4 text-green-600" />
-                  <span className="text-sm font-medium text-gray-700">Longitude</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Longitude
+                  </span>
                 </div>
                 <p className="text-lg font-mono font-semibold text-gray-900">
                   {formatCoordinate(formData.longitude)}°
                 </p>
               </div>
-              
+
               <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20">
                 <div className="flex items-center space-x-2 mb-2">
                   <Shield className="w-4 h-4 text-purple-600" />
-                  <span className="text-sm font-medium text-gray-700">Safety Radius</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Safety Radius
+                  </span>
                 </div>
                 <p className="text-lg font-mono font-semibold text-gray-900">
                   {formatRadius(formData.radius)}
@@ -192,7 +232,9 @@ export function SchoolLocationUpdater({ onLocationUpdate, currentLocation }: Sch
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200/50">
               <div className="flex items-center space-x-2 text-blue-700">
                 <CheckCircle className="w-4 h-4" />
-                <span className="text-sm font-medium">Current Configuration Active</span>
+                <span className="text-sm font-medium">
+                  Current Configuration Active
+                </span>
               </div>
               <p className="text-xs text-blue-600 mt-1">
                 Parents can only request pickups within this defined zone
@@ -212,11 +254,13 @@ export function SchoolLocationUpdater({ onLocationUpdate, currentLocation }: Sch
                   type="number"
                   step="any"
                   value={formData.latitude}
-                  onChange={(e) => handleInputChange('latitude', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("latitude", e.target.value)
+                  }
                   className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    validationErrors.latitude 
-                      ? 'border-red-300 bg-red-50' 
-                      : 'border-gray-200 bg-white/80 hover:bg-white focus:bg-white'
+                    validationErrors.latitude
+                      ? "border-red-300 bg-red-50"
+                      : "border-gray-200 bg-white/80 hover:bg-white focus:bg-white"
                   }`}
                   placeholder="Enter latitude (-90 to 90)"
                 />
@@ -237,11 +281,13 @@ export function SchoolLocationUpdater({ onLocationUpdate, currentLocation }: Sch
                   type="number"
                   step="any"
                   value={formData.longitude}
-                  onChange={(e) => handleInputChange('longitude', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("longitude", e.target.value)
+                  }
                   className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    validationErrors.longitude 
-                      ? 'border-red-300 bg-red-50' 
-                      : 'border-gray-200 bg-white/80 hover:bg-white focus:bg-white'
+                    validationErrors.longitude
+                      ? "border-red-300 bg-red-50"
+                      : "border-gray-200 bg-white/80 hover:bg-white focus:bg-white"
                   }`}
                   placeholder="Enter longitude (-180 to 180)"
                 />
@@ -266,12 +312,16 @@ export function SchoolLocationUpdater({ onLocationUpdate, currentLocation }: Sch
                   max="5000"
                   step="100"
                   value={formData.radius}
-                  onChange={(e) => handleInputChange('radius', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    handleInputChange("radius", parseInt(e.target.value))
+                  }
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
                   <span>100m</span>
-                  <span className="font-medium text-purple-600">{formatRadius(formData.radius)}</span>
+                  <span className="font-medium text-purple-600">
+                    {formatRadius(formData.radius)}
+                  </span>
                   <span>5km</span>
                 </div>
               </div>
@@ -293,7 +343,8 @@ export function SchoolLocationUpdater({ onLocationUpdate, currentLocation }: Sch
                 rows={3}
               />
               <p className="text-xs text-gray-500">
-                Providing a reason helps maintain an audit trail of location changes
+                Providing a reason helps maintain an audit trail of location
+                changes
               </p>
             </div>
 
@@ -303,7 +354,8 @@ export function SchoolLocationUpdater({ onLocationUpdate, currentLocation }: Sch
                 <span className="text-sm font-medium">Location Update</span>
               </div>
               <p className="text-xs text-amber-600 mt-1">
-                Changes will affect all pickup requests. Ensure coordinates are accurate.
+                Changes will affect all pickup requests. Ensure coordinates are
+                accurate.
               </p>
             </div>
           </div>
@@ -341,7 +393,7 @@ export function SchoolLocationUpdater({ onLocationUpdate, currentLocation }: Sch
                 ) : (
                   <Save className="w-4 h-4 mr-2" />
                 )}
-                {isLoading ? 'Saving...' : 'Save Changes'}
+                {isLoading ? "Saving..." : "Save Changes"}
               </Button>
               <Button
                 onClick={handleReset}
