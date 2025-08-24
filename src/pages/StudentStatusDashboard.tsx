@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Student } from "../types/auth";
-import { getStudentsList } from "../services/student.service";
+import { getStudentsByUser } from "../services/student.service";
 import { Header } from "../components/dashboard/Header";
 import { StudentStatusCard2 } from "../components/dashboard/StudentStatusCard2";
 import { StudentCard2 } from "../components/dashboard/StudentCard2";
@@ -19,7 +19,7 @@ export default function StudentStatusDashboard() {
   useEffect(() => {
     const loadStudents = async () => {
       try {
-        const data = await getStudentsList(userId, "PARENT");
+        const data = await getStudentsByUser(userId, "PARENT");
         setStudents(data);
       } catch {
         toast.error("Failed to load students");
