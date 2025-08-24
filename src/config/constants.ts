@@ -14,3 +14,4 @@ export const SCHOOL_LOCATION: SchoolLocation = {
   longitude: -7.6367796029366675,
   radius: 500, // 500 meters radius
 };
+// Additional configuration for development
