@@ -1,5 +1,5 @@
-import { Student } from '../types/auth';
-import { User } from 'lucide-react';
+import { Student } from "../types/auth";
+import { User } from "lucide-react";
 
 interface StudentCardProps {
   student: Student;
@@ -22,7 +22,9 @@ export default function StudentCard({ student }: StudentCardProps) {
             </div>
           )}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">{student.name}</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              {student.name}
+            </h3>
             <p className="text-sm text-gray-600">Grade: {student.grade}</p>
           </div>
         </div>

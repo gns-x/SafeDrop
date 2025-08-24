@@ -1,5 +1,5 @@
-import { Bell } from 'lucide-react';
-import { StudentStatus } from '../types/student';
+import { Bell } from "lucide-react";
+import { StudentStatus } from "../types/student";
 
 interface StatusChangeNotificationProps {
   studentName: string;
@@ -7,32 +7,36 @@ interface StatusChangeNotificationProps {
   onClose: () => void;
 }
 
-export function StatusChangeNotification({ studentName, newStatus, onClose }: StatusChangeNotificationProps) {
+export function StatusChangeNotification({
+  studentName,
+  newStatus,
+  onClose,
+}: StatusChangeNotificationProps) {
   const getStatusConfig = () => {
     switch (newStatus) {
-      case 'PENDING_PICKUP':
+      case "PENDING_PICKUP":
         return {
-          bg: 'bg-amber-50',
-          border: 'border-amber-200',
-          text: 'text-amber-800',
-          icon: 'text-amber-600',
-          message: 'is waiting for pickup'
+          bg: "bg-amber-50",
+          border: "border-amber-200",
+          text: "text-amber-800",
+          icon: "text-amber-600",
+          message: "is waiting for pickup",
         };
-      case 'WITH_PARENT':
+      case "WITH_PARENT":
         return {
-          bg: 'bg-green-50',
-          border: 'border-green-200',
-          text: 'text-green-800',
-          icon: 'text-green-600',
-          message: 'has been picked up'
+          bg: "bg-green-50",
+          border: "border-green-200",
+          text: "text-green-800",
+          icon: "text-green-600",
+          message: "has been picked up",
         };
       default:
         return {
-          bg: 'bg-blue-50',
-          border: 'border-blue-200',
-          text: 'text-blue-800',
-          icon: 'text-blue-600',
-          message: 'status has changed'
+          bg: "bg-blue-50",
+          border: "border-blue-200",
+          text: "text-blue-800",
+          icon: "text-blue-600",
+          message: "status has changed",
         };
     }
   };
@@ -41,7 +45,9 @@ export function StatusChangeNotification({ studentName, newStatus, onClose }: St
 
   return (
     <div className="fixed top-24 right-4 z-50 animate-slide-in">
-      <div className={`max-w-sm w-full ${config.bg} ${config.border} border p-4 rounded-xl shadow-lg`}>
+      <div
+        className={`max-w-sm w-full ${config.bg} ${config.border} border p-4 rounded-xl shadow-lg`}
+      >
         <div className="flex items-start">
           <div className={`flex-shrink-0 ${config.icon}`}>
             <Bell className="h-6 w-6" />
