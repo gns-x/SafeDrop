@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Lock, Eye, EyeOff } from 'lucide-react';
+import React, { useState } from "react";
+import { Lock, Eye, EyeOff } from "lucide-react";
 
 interface AdminPasswordInputProps {
   value: string;
@@ -10,13 +10,16 @@ interface AdminPasswordInputProps {
 export const AdminPasswordInput: React.FC<AdminPasswordInputProps> = ({
   value,
   onChange,
-  disabled
+  disabled,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="mt-6">
-      <label htmlFor="password" className="block text-sm font-medium text-white/80 mb-2">
+      <label
+        htmlFor="password"
+        className="block text-sm font-medium text-white/80 mb-2"
+      >
         Password
       </label>
       <div className="relative group">
@@ -36,7 +39,11 @@ export const AdminPasswordInput: React.FC<AdminPasswordInputProps> = ({
           onClick={() => setShowPassword(!showPassword)}
           className="absolute right-4 top-1/2 transform -translate-y-1/2 text-purple-300 hover:text-purple-400 transition-colors duration-200"
         >
-          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          {showPassword ? (
+            <EyeOff className="w-5 h-5" />
+          ) : (
+            <Eye className="w-5 h-5" />
+          )}
         </button>
       </div>
     </div>

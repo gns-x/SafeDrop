@@ -1,5 +1,5 @@
-import React from 'react';
-import { Mail } from 'lucide-react';
+import React from "react";
+import { Mail } from "lucide-react";
 
 interface AdminEmailInputProps {
   value: string;
@@ -10,10 +10,13 @@ interface AdminEmailInputProps {
 export const AdminEmailInput: React.FC<AdminEmailInputProps> = ({
   value,
   onChange,
-  disabled
+  disabled,
 }) => (
   <div className="mt-6">
-    <label htmlFor="email" className="block text-sm font-medium text-white/80 mb-2">
+    <label
+      htmlFor="email"
+      className="block text-sm font-medium text-white/80 mb-2"
+    >
       Email Address
     </label>
     <div className="relative group">

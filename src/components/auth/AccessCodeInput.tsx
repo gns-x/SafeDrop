@@ -1,5 +1,5 @@
-import React from 'react';
-import { KeyRound } from 'lucide-react';
+import React from "react";
+import { KeyRound } from "lucide-react";
 
 interface AccessCodeInputProps {
   value: string;
@@ -10,10 +10,13 @@ interface AccessCodeInputProps {
 export const AccessCodeInput: React.FC<AccessCodeInputProps> = ({
   value,
   onChange,
-  disabled
+  disabled,
 }) => (
   <div className="mt-6">
-    <label htmlFor="accessCode" className="block text-sm font-medium text-white/80 mb-2">
+    <label
+      htmlFor="accessCode"
+      className="block text-sm font-medium text-white/80 mb-2"
+    >
       Access Code
     </label>
     <div className="relative group">

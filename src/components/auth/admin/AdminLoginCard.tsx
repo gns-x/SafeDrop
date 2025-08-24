@@ -1,8 +1,8 @@
-import React from 'react';
-import { LoadingSpinner } from '../LoadingSpinner';
-import { AdminLoginHeader } from './AdminLoginHeader';
-import { AdminEmailInput } from './AdminEmailInput';
-import { AdminPasswordInput } from './AdminPasswordInput';
+import React from "react";
+import { LoadingSpinner } from "../LoadingSpinner";
+import { AdminLoginHeader } from "./AdminLoginHeader";
+import { AdminEmailInput } from "./AdminEmailInput";
+import { AdminPasswordInput } from "./AdminPasswordInput";
 
 interface AdminLoginCardProps {
   formData: {
@@ -81,13 +81,16 @@ export const AdminLoginCard: React.FC<AdminLoginCardProps> = ({
                     Authenticating...
                   </span>
                 ) : (
-                  'Access Admin Panel'
+                  "Access Admin Panel"
                 )}
               </button>
 
               <p className="text-center text-sm text-white/60">
-                Not an administrator?{' '}
-                <a href="/" className="text-purple-300 hover:text-purple-200 transition-colors">
+                Not an administrator?{" "}
+                <a
+                  href="/"
+                  className="text-purple-300 hover:text-purple-200 transition-colors"
+                >
                   Return to main login
                 </a>
               </p>

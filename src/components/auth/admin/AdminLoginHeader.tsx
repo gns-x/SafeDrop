@@ -1,11 +1,13 @@
-import React from 'react';
-import { Shield } from 'lucide-react';
+import React from "react";
+import { Shield } from "lucide-react";
 
 interface AdminLoginHeaderProps {
   logoUrl?: string;
 }
 
-export const AdminLoginHeader: React.FC<AdminLoginHeaderProps> = ({ logoUrl }) => (
+export const AdminLoginHeader: React.FC<AdminLoginHeaderProps> = ({
+  logoUrl,
+}) => (
   <div className="relative flex flex-col items-center">
     <div className="relative">
       {logoUrl ? (
@@ -28,7 +30,11 @@ export const AdminLoginHeader: React.FC<AdminLoginHeaderProps> = ({ logoUrl }) =
       )}
     </div>
 
-    <h2 className="mt-10 text-4xl font-bold text-white tracking-tight">Admin Access</h2>
-    <p className="mt-3 text-lg text-purple-100/80">Enter your admin credentials to continue</p>
+    <h2 className="mt-10 text-4xl font-bold text-white tracking-tight">
+      Admin Access
+    </h2>
+    <p className="mt-3 text-lg text-purple-100/80">
+      Enter your admin credentials to continue
+    </p>
   </div>
 );

@@ -1,15 +1,15 @@
-import React from 'react';
-import { LoginFormData } from '../../types/auth';
-import { RoleSelector } from './RoleSelector';
-import { LoadingSpinner } from './LoadingSpinner';
-import { LoginHeader } from './LoginHeader';
-import { AccessCodeInput } from './AccessCodeInput';
+import React from "react";
+import { LoginFormData } from "../../types/auth";
+import { RoleSelector } from "./RoleSelector";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { LoginHeader } from "./LoginHeader";
+import { AccessCodeInput } from "./AccessCodeInput";
 
 interface LoginCardProps {
   formData: LoginFormData;
   isLoading: boolean;
   onSubmit: (e: React.FormEvent) => Promise<void>;
-  onRoleChange: (role: 'PARENT' | 'TEACHER') => void;
+  onRoleChange: (role: "PARENT" | "TEACHER") => void;
   onAccessCodeChange: (code: string) => void;
   logoUrl?: string;
 }
@@ -59,7 +59,7 @@ export const LoginCard: React.FC<LoginCardProps> = ({
                 Signing in...
               </span>
             ) : (
-              'Sign In'
+              "Sign In"
             )}
           </button>
         </form>

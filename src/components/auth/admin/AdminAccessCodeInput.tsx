@@ -1,5 +1,5 @@
-import React from 'react';
-import { Key } from 'lucide-react';
+import React from "react";
+import { Key } from "lucide-react";
 
 interface AdminAccessCodeInputProps {
   value: string;
@@ -10,10 +10,13 @@ interface AdminAccessCodeInputProps {
 export const AdminAccessCodeInput: React.FC<AdminAccessCodeInputProps> = ({
   value,
   onChange,
-  disabled
+  disabled,
 }) => (
   <div className="mt-6">
-    <label htmlFor="adminAccessCode" className="block text-sm font-medium text-white/80 mb-2">
+    <label
+      htmlFor="adminAccessCode"
+      className="block text-sm font-medium text-white/80 mb-2"
+    >
       Admin Access Code
     </label>
     <div className="relative group">
