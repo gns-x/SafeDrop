@@ -1,4 +1,4 @@
-import { apiService } from './api.service';
+import { apiService } from "./api.service";
 
 export interface DashboardStats {
   overview: {
@@ -76,7 +76,7 @@ export interface PickupAnalytics {
 
 export interface RecentActivity {
   id: string;
-  type: 'pickup' | 'user' | 'payment';
+  type: "pickup" | "user" | "payment";
   title: string;
   description: string;
   timestamp: string;
@@ -152,26 +152,35 @@ export interface FinancialOverview {
 
 class AdminService {
   async getDashboardStats(): Promise<DashboardStats> {
-    return apiService.get<DashboardStats>('/admin/dashboard-stats');
+    return apiService.get<DashboardStats>("/admin/dashboard-stats");
   }
 
-  async getUserAnalytics(period: string = '7d'): Promise<UserAnalytics> {
-    return apiService.get<UserAnalytics>(`/admin/user-analytics?period=${period}`);
+  async getUserAnalytics(period: string = "7d"): Promise<UserAnalytics> {
+    return apiService.get<UserAnalytics>(
+      `/admin/user-analytics?period=${period}`,
+    );
   }
 
-  async getPickupAnalytics(period: string = '7d'): Promise<PickupAnalytics> {
-    return apiService.get<PickupAnalytics>(`/admin/pickup-analytics?period=${period}`);
+  async getPickupAnalytics(period: string = "7d"): Promise<PickupAnalytics> {
+    return apiService.get<PickupAnalytics>(
+      `/admin/pickup-analytics?period=${period}`,
+    );
   }
 
   async getSystemHealth(): Promise<SystemHealth> {
-    return apiService.get<SystemHealth>('/admin/system-health');
+    return apiService.get<SystemHealth>("/admin/system-health");
   }
 
   async getRecentActivities(limit: number = 20): Promise<RecentActivity[]> {
-    return apiService.get<RecentActivity[]>(`/admin/recent-activities?limit=${limit}`);
+    return apiService.get<RecentActivity[]>(
+      `/admin/recent-activities?limit=${limit}`,
+    );
   }
 
-  async getAllUsers(role?: string, page: number = 1): Promise<{
+  async getAllUsers(
+    role?: string,
+    page: number = 1,
+  ): Promise<{
     users: User[];
     pagination: {
       page: number;
@@ -181,9 +190,9 @@ class AdminService {
     };
   }> {
     const params = new URLSearchParams();
-    if (role) params.append('role', role);
-    params.append('page', page.toString());
-    
+    if (role) params.append("role", role);
+    params.append("page", page.toString());
+
     return apiService.get(`/admin/users?${params.toString()}`);
   }
 
@@ -199,8 +208,12 @@ class AdminService {
     return apiService.get(`/admin/students?page=${page}`);
   }
 
-  async getFinancialOverview(period: string = '30d'): Promise<FinancialOverview> {
-    return apiService.get<FinancialOverview>(`/admin/financial-overview?period=${period}`);
+  async getFinancialOverview(
+    period: string = "30d",
+  ): Promise<FinancialOverview> {
+    return apiService.get<FinancialOverview>(
+      `/admin/financial-overview?period=${period}`,
+    );
   }
 }
 
