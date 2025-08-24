@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useCallback } from "react";
+import { motion } from "framer-motion";
 import {
   AreaChart,
   Area,
@@ -10,8 +10,8 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
-} from 'recharts';
+  Cell,
+} from "recharts";
 import {
   DollarSign,
   TrendingUp,
@@ -19,45 +19,50 @@ import {
   Receipt,
   Calendar,
   Eye,
-  Download
-} from 'lucide-react';
-import { adminService, FinancialOverview as FinancialOverviewType } from '../../services/admin.service';
-import { ChartContainer } from '../ui/chart-container';
-import { StatCard } from '../ui/stat-card';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Progress } from '../ui/progress';
-import toast from 'react-hot-toast';
+  Download,
+} from "lucide-react";
+import {
+  adminService,
+  FinancialOverview as FinancialOverviewType,
+} from "../../services/admin.service";
+import { ChartContainer } from "../ui/chart-container";
+import { StatCard } from "../ui/stat-card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Badge } from "../ui/badge";
+import { Progress } from "../ui/progress";
+import toast from "react-hot-toast";
 
 export const FinancialOverview: React.FC = () => {
-  const [financial, setFinancial] = useState<FinancialOverviewType | null>(null);
+  const [financial, setFinancial] = useState<FinancialOverviewType | null>(
+    null,
+  );
   const [isLoading, setIsLoading] = useState(true);
-  const [period, setPeriod] = useState('30d');
+  const [period, setPeriod] = useState("30d");
 
-  const fetchFinancialOverview = async () => {
+  const fetchFinancialOverview = useCallback(async () => {
     try {
       setIsLoading(true);
       const data = await adminService.getFinancialOverview(period);
       setFinancial(data);
     } catch (error) {
-      console.error('Error fetching financial overview:', error);
-      toast.error('Failed to load financial overview');
+      console.error("Error fetching financial overview:", error);
+      toast.error("Failed to load financial overview");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [period]);
 
   useEffect(() => {
     fetchFinancialOverview();
-  }, [period]);
+  }, [fetchFinancialOverview]);
 
-  const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+  const COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
 
   const periodOptions = [
-    { value: '7d', label: '7 Days' },
-    { value: '30d', label: '30 Days' },
-    { value: '90d', label: '90 Days' },
-    { value: '1y', label: '1 Year' }
+    { value: "7d", label: "7 Days" },
+    { value: "30d", label: "30 Days" },
+    { value: "90d", label: "90 Days" },
+    { value: "1y", label: "1 Year" },
   ];
 
   if (isLoading || !financial) {
@@ -68,12 +73,17 @@ export const FinancialOverview: React.FC = () => {
             <h2 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
               Financial Overview
             </h2>
-            <p className="text-gray-600 mt-2">Revenue tracking and payment analytics</p>
+            <p className="text-gray-600 mt-2">
+              Revenue tracking and payment analytics
+            </p>
           </div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+            <div
+              key={i}
+              className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6"
+            >
               <div className="animate-pulse">
                 <div className="h-4 bg-gray-200 rounded w-1/3 mb-4"></div>
                 <div className="h-64 bg-gray-200 rounded-lg"></div>
@@ -85,55 +95,56 @@ export const FinancialOverview: React.FC = () => {
     );
   }
 
-  const avgTransactionValue = financial.totalTransactions > 0 
-    ? financial.totalRevenue / financial.totalTransactions 
-    : 0;
+  const avgTransactionValue =
+    financial.totalTransactions > 0
+      ? financial.totalRevenue / financial.totalTransactions
+      : 0;
 
   const summaryCards = [
     {
-      title: 'Total Revenue',
+      title: "Total Revenue",
       value: financial.totalRevenue,
       icon: DollarSign,
-      variant: 'success' as const,
+      variant: "success" as const,
       trend: {
         value: `+${financial.growthRate}%`,
-        isPositive: financial.growthRate >= 0
+        isPositive: financial.growthRate >= 0,
       },
-      description: 'from last period'
+      description: "from last period",
     },
     {
-      title: 'Total Transactions',
+      title: "Total Transactions",
       value: financial.totalTransactions,
       icon: Receipt,
-      variant: 'info' as const,
+      variant: "info" as const,
       trend: {
-        value: '+12%',
-        isPositive: true
+        value: "+12%",
+        isPositive: true,
       },
-      description: 'from last period'
+      description: "from last period",
     },
     {
-      title: 'Avg Transaction',
+      title: "Avg Transaction",
       value: avgTransactionValue,
       icon: TrendingUp,
-      variant: 'warning' as const,
+      variant: "warning" as const,
       trend: {
-        value: '+8%',
-        isPositive: true
+        value: "+8%",
+        isPositive: true,
       },
-      description: 'from last period'
+      description: "from last period",
     },
     {
-      title: 'Growth Rate',
+      title: "Growth Rate",
       value: `${financial.growthRate}%`,
       icon: CreditCard,
-      variant: financial.growthRate >= 0 ? 'success' : 'error' as const,
+      variant: financial.growthRate >= 0 ? "success" : ("error" as const),
       trend: {
-        value: financial.growthRate >= 0 ? '↗' : '↘',
-        isPositive: financial.growthRate >= 0
+        value: financial.growthRate >= 0 ? "↗" : "↘",
+        isPositive: financial.growthRate >= 0,
       },
-      description: 'month over month'
-    }
+      description: "month over month",
+    },
   ];
 
   return (
@@ -148,9 +159,11 @@ export const FinancialOverview: React.FC = () => {
           <h2 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
             Financial Overview
           </h2>
-          <p className="text-gray-600 mt-2">Revenue tracking and payment analytics</p>
+          <p className="text-gray-600 mt-2">
+            Revenue tracking and payment analytics
+          </p>
         </div>
-        
+
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2 bg-white rounded-xl border border-gray-200 px-4 py-2">
             <Calendar className="w-4 h-4 text-gray-500" />
@@ -166,12 +179,14 @@ export const FinancialOverview: React.FC = () => {
               ))}
             </select>
           </div>
-          
+
           <button className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
             <Eye className="w-4 h-4 text-gray-600" />
-            <span className="text-sm font-medium text-gray-700">View Details</span>
+            <span className="text-sm font-medium text-gray-700">
+              View Details
+            </span>
           </button>
-          
+
           <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors">
             <Download className="w-4 h-4" />
             <span className="text-sm font-medium">Export</span>
@@ -209,7 +224,9 @@ export const FinancialOverview: React.FC = () => {
           icon={TrendingUp}
           actions={
             <div className="flex items-center space-x-2">
-              <Badge variant="success" size="sm">+23%</Badge>
+              <Badge variant="success" size="sm">
+                +23%
+              </Badge>
               <span className="text-sm text-gray-600">vs last period</span>
             </div>
           }
@@ -218,28 +235,39 @@ export const FinancialOverview: React.FC = () => {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={financial.dailyRevenue}>
                 <defs>
-                  <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#10B981" stopOpacity={0.1}/>
+                  <linearGradient
+                    id="revenueGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0.1} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis
                   dataKey="date"
-                  tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  tickFormatter={(date) =>
+                    new Date(date).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })
+                  }
                   stroke="#6b7280"
                   fontSize={12}
                 />
                 <YAxis stroke="#6b7280" fontSize={12} />
                 <Tooltip
                   labelFormatter={(date) => new Date(date).toLocaleDateString()}
-                  formatter={(value) => [`$${value}`, 'Revenue']}
+                  formatter={(value) => [`$${value}`, "Revenue"]}
                   contentStyle={{
-                    backgroundColor: 'white',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '12px',
-                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
-                    padding: '12px'
+                    backgroundColor: "white",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "12px",
+                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+                    padding: "12px",
                   }}
                 />
                 <Area
@@ -274,23 +302,26 @@ export const FinancialOverview: React.FC = () => {
                   nameKey="method"
                 >
                   {financial.paymentMethods.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
                   ))}
                 </Pie>
                 <Tooltip
                   formatter={(value, name) => [value, `${name} payments`]}
                   contentStyle={{
-                    backgroundColor: 'white',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '12px',
-                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
-                    padding: '12px'
+                    backgroundColor: "white",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "12px",
+                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+                    padding: "12px",
                   }}
                 />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          
+
           <div className="flex justify-center flex-wrap gap-4 mt-6">
             {financial.paymentMethods.map((entry, index) => (
               <motion.div
@@ -304,7 +335,9 @@ export const FinancialOverview: React.FC = () => {
                   className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 ></div>
-                <span className="text-sm text-gray-600 capitalize">{entry.method}</span>
+                <span className="text-sm text-gray-600 capitalize">
+                  {entry.method}
+                </span>
                 <span className="text-sm font-medium text-gray-900">
                   (${entry._sum.amount.toLocaleString()})
                 </span>
@@ -329,12 +362,24 @@ export const FinancialOverview: React.FC = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-4 px-4 font-semibold text-gray-700">Rank</th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-700">Student Name</th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-700">Total Paid</th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-700">Transactions</th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-700">Avg per Transaction</th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-700">Status</th>
+                <th className="text-left py-4 px-4 font-semibold text-gray-700">
+                  Rank
+                </th>
+                <th className="text-left py-4 px-4 font-semibold text-gray-700">
+                  Student Name
+                </th>
+                <th className="text-left py-4 px-4 font-semibold text-gray-700">
+                  Total Paid
+                </th>
+                <th className="text-left py-4 px-4 font-semibold text-gray-700">
+                  Transactions
+                </th>
+                <th className="text-left py-4 px-4 font-semibold text-gray-700">
+                  Avg per Transaction
+                </th>
+                <th className="text-left py-4 px-4 font-semibold text-gray-700">
+                  Status
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -347,16 +392,29 @@ export const FinancialOverview: React.FC = () => {
                   className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                 >
                   <td className="py-4 px-4">
-                    <span className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
-                      index === 0 ? 'bg-yellow-100 text-yellow-700' :
-                      index === 1 ? 'bg-gray-100 text-gray-700' :
-                      index === 2 ? 'bg-orange-100 text-orange-700' :
-                      'bg-blue-100 text-blue-700'
-                    }`}>
-                      {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}
+                    <span
+                      className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
+                        index === 0
+                          ? "bg-yellow-100 text-yellow-700"
+                          : index === 1
+                            ? "bg-gray-100 text-gray-700"
+                            : index === 2
+                              ? "bg-orange-100 text-orange-700"
+                              : "bg-blue-100 text-blue-700"
+                      }`}
+                    >
+                      {index === 0
+                        ? "🥇"
+                        : index === 1
+                          ? "🥈"
+                          : index === 2
+                            ? "🥉"
+                            : index + 1}
                     </span>
                   </td>
-                  <td className="py-4 px-4 font-medium text-gray-900">{student.studentName}</td>
+                  <td className="py-4 px-4 font-medium text-gray-900">
+                    {student.studentName}
+                  </td>
                   <td className="py-4 px-4 text-green-600 font-bold">
                     ${student._sum.amount.toLocaleString()}
                   </td>
@@ -365,7 +423,9 @@ export const FinancialOverview: React.FC = () => {
                     ${(student._sum.amount / student._count).toFixed(2)}
                   </td>
                   <td className="py-4 px-4">
-                    <Badge variant="success" size="sm">Active</Badge>
+                    <Badge variant="success" size="sm">
+                      Active
+                    </Badge>
                   </td>
                 </motion.tr>
               ))}
@@ -385,14 +445,18 @@ export const FinancialOverview: React.FC = () => {
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm text-gray-600">This Month</span>
-                  <span className="text-sm font-medium text-green-600">+23%</span>
+                  <span className="text-sm font-medium text-green-600">
+                    +23%
+                  </span>
                 </div>
                 <Progress value={75} variant="success" size="lg" />
               </div>
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm text-gray-600">Last Month</span>
-                  <span className="text-sm font-medium text-blue-600">+18%</span>
+                  <span className="text-sm font-medium text-blue-600">
+                    +18%
+                  </span>
                 </div>
                 <Progress value={60} variant="info" size="lg" />
               </div>
