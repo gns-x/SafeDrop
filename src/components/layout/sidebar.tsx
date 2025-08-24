@@ -1,20 +1,20 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React from "react";
+import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
   Clock,
   BarChart2,
-  Settings
-} from 'lucide-react';
+  Settings,
+} from "lucide-react";
 
 const Sidebar = () => {
   const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
-    { icon: Users, label: 'Students', path: '/admin/students' },
-    { icon: Clock, label: 'Pickups', path: '/admin/pickups' },
-    { icon: BarChart2, label: 'Analytics', path: '/admin/analytics' },
-    { icon: Settings, label: 'Settings', path: '/admin/settings' },
+    { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard" },
+    { icon: Users, label: "Students", path: "/admin/students" },
+    { icon: Clock, label: "Pickups", path: "/admin/pickups" },
+    { icon: BarChart2, label: "Analytics", path: "/admin/analytics" },
+    { icon: Settings, label: "Settings", path: "/admin/settings" },
   ];
 
   return (
@@ -29,8 +29,8 @@ const Sidebar = () => {
               className={({ isActive }) =>
                 `flex items-center space-x-3 px-4 py-3 rounded-lg mb-2 transition-colors ${
                   isActive
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-300 hover:bg-gray-800'
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-300 hover:bg-gray-800"
                 }`
               }
             >

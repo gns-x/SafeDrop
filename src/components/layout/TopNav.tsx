@@ -1,12 +1,14 @@
-import React from 'react';
-import { LogOut, Bell, User } from 'lucide-react';
+import React from "react";
+import { LogOut, Bell, User } from "lucide-react";
 
 const TopNav = () => {
   return (
     <div className="h-16 bg-white border-b fixed top-0 right-0 left-64 z-10">
       <div className="h-full px-6 flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-semibold text-gray-800">School Pickup Dashboard</h1>
+          <h1 className="text-xl font-semibold text-gray-800">
+            School Pickup Dashboard
+          </h1>
         </div>
 
         <div className="flex items-center space-x-6">
