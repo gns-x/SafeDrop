@@ -1,5 +1,5 @@
-import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
-import { API_URL } from '../config/constants';
+import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
+import { API_URL } from "../config/constants";
 
 class ApiService {
   private api: AxiosInstance;
@@ -8,14 +8,14 @@ class ApiService {
     this.api = axios.create({
       baseURL: API_URL,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
     // Add request interceptor to include auth token
     this.api.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('access_token');
+        const token = localStorage.getItem("access_token");
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -23,7 +23,7 @@ class ApiService {
       },
       (error) => {
         return Promise.reject(error);
-      }
+      },
     );
 
     // Add response interceptor for error handling
@@ -33,10 +33,10 @@ class ApiService {
         if (error.response?.status === 401) {
           // Token expired or invalid, redirect to login
           localStorage.clear();
-          window.location.href = '/login';
+          window.location.href = "/login";
         }
         return Promise.reject(error);
-      }
+      },
     );
   }
 
@@ -80,19 +80,27 @@ class ApiService {
     }
   }
 
-  private handleError(error: any, operation: string): never {
+  private handleError(error: unknown, operation: string): never {
     console.error(`API Error in ${operation}:`, error);
-    
-    if (error.response) {
+
+    if (error && typeof error === "object" && "response" in error) {
       // Server responded with error status
-      const message = error.response.data?.message || error.response.data?.error || 'Server error';
+      const responseError = error as {
+        response: { data?: { message?: string; error?: string } };
+      };
+      const message =
+        responseError.response.data?.message ||
+        responseError.response.data?.error ||
+        "Server error";
       throw new Error(message);
-    } else if (error.request) {
+    } else if (error && typeof error === "object" && "request" in error) {
       // Request was made but no response received
-      throw new Error('No response from server. Please check your connection.');
+      throw new Error("No response from server. Please check your connection.");
     } else {
       // Something else happened
-      throw new Error(error.message || 'An unexpected error occurred');
+      const errorMessage =
+        error instanceof Error ? error.message : "An unexpected error occurred";
+      throw new Error(errorMessage);
     }
   }
 }
