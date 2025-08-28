@@ -7,7 +7,8 @@ interface TeacherStatsProps {
 }
 
 export function TeacherStats({ students, userGrade }: TeacherStatsProps) {
-  const activeStudents = students.filter((s) => s.status !== "IN_CLASS").length;
+  // Only count truly active pickup requests
+  const activeStudents = students.filter((s) => s.status === "PENDING_PICKUP").length;
   const inClassStudents = students.filter(
     (s) => s.status === "IN_CLASS",
   ).length;

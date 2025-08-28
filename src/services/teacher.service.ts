@@ -49,26 +49,4 @@ export async function getStudentsByUser(
   }
 }
 
-export async function getStudentsByGrade(): Promise<StudentWithStatus[]> {
-  try {
-    console.warn(
-      "getStudentsByGrade is deprecated, use getStudentsByUser instead",
-    );
-    return [];
-  } catch (error) {
-    console.error("Error fetching students by grade:", error);
-    throw new Error("Failed to fetch students");
-  }
-}
 
-export const getPickupRecordsForGrade = async () => {
-  try {
-    console.warn(
-      "getPickupRecordsForGrade is deprecated, use WebSocket updates instead",
-    );
-    return [];
-  } catch (error) {
-    console.error("Error fetching pickup records:", error);
-    throw error;
-  }
-};

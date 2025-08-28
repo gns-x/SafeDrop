@@ -4,6 +4,7 @@ import { Search } from "lucide-react";
 import { StudentWithStatus, StudentStatus } from "../types/student";
 import { getStudentsByUser } from "../services/teacher.service";
 import { useAuth } from "../hooks/useAuth";
+import { useWebSocket } from "../hooks/useWebSocket";
 import { websocketService } from "../services/websocket.service";
 import { StatusNotification } from "../components/notifications/StatusNotification";
 import { TeacherHeader } from "../components/dashboard/TeacherHeader";
@@ -17,6 +18,8 @@ const notificationSound = "/notification.mp3";
 export default function TeacherDashboard() {
   const navigate = useNavigate();
   const { userId, userName, userGrade, logout, isAuthenticated } = useAuth();
+  // Ensure WebSocket connection for realtime updates
+  useWebSocket();
   const [students, setStudents] = useState<StudentWithStatus[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -88,6 +91,33 @@ export default function TeacherDashboard() {
     return () => unsubscribe();
   }, [userGrade, playSound, userId]);
 
+  // Listen to pickup requests broadcasted to teachers
+  useEffect(() => {
+    const handleTeacherBroadcast = (broadcast: any) => {
+      if (!broadcast || broadcast.type !== "PICKUP_REQUEST") return;
+      const studentName = broadcast?.data?.studentName as string | undefined;
+      if (!studentName) return;
+
+      setStudents((prev) => {
+        const list = Array.isArray(prev) ? prev : [];
+        const target = list.find((s) => s.name === studentName);
+        if (!target) return list;
+        // Mark as pending pickup for visibility
+        const updated = list.map((s) =>
+          s.id === target.id ? { ...s, status: "PENDING_PICKUP" } : s,
+        );
+        setNotification({ studentName: target.name, status: "PENDING_PICKUP" as any });
+        playSound();
+        return updated;
+      });
+    };
+
+    websocketService.on("teacher_broadcast", handleTeacherBroadcast);
+    return () => {
+      websocketService.off("teacher_broadcast", handleTeacherBroadcast);
+    };
+  }, [playSound]);
+
   const handleStatusUpdate = async (
     studentId: string,
     newStatus: StudentStatus,
@@ -99,7 +129,11 @@ export default function TeacherDashboard() {
       );
     });
 
-    // Reload pickup records to ensure consistency
+    // Show local notification for confirmation/cancel
+    const picked = students.find((s) => s.id === studentId);
+    if (picked) {
+      setNotification({ studentName: picked.name, status: newStatus });
+    }
   };
 
   const handleLogout = () => {

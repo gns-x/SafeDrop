@@ -18,21 +18,4 @@ export interface PickupRecord {
   location: string;
 }
 
-export interface Analytics {
-  totalStudents: number;
-  todayPickups: number;
-  pendingPickups: number;
-  completedPickups: number;
-  pickupTrends: Array<{
-    date: string;
-    count: number;
-  }>;
-  gradeDistribution: Array<{
-    grade: string;
-    count: number;
-  }>;
-  dailyActivity: Array<{
-    hour: string;
-    pickups: number;
-  }>;
-}
+

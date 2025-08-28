@@ -9,15 +9,7 @@ export interface LocationUpdateResponse {
   updatedAt: string;
 }
 
-export interface LocationHistoryEntry {
-  id: string;
-  latitude: number;
-  longitude: number;
-  radius: number;
-  updatedBy: string;
-  updatedAt: string;
-  reason?: string;
-}
+// Location history removed
 
 class LocationManagementService {
   private baseUrl = `${API_URL}/location`;
@@ -74,26 +66,7 @@ class LocationManagementService {
     }
   }
 
-  async getLocationHistory(): Promise<LocationHistoryEntry[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/school/history`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data.history;
-    } catch (error) {
-      console.error("Error fetching location history:", error);
-      throw new Error("Failed to fetch location history");
-    }
-  }
+  // Location history API removed entirely
 
   async validateLocation(
     location: SchoolLocation,

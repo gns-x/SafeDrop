@@ -10,7 +10,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { Student } from "../../types/auth";
-import { Location } from "../../types/location";
+import { Location, SchoolLocation } from "../../types/location";
 import {
   sendPickupRequest,
   getCurrentLocation,
@@ -27,12 +27,12 @@ interface StudentCardProps {
   schoolLocation: SchoolLocation;
 }
 
-export function StudentCard({ student, onRequestPickup, schoolLocation }: StudentCardProps) {
+export function StudentCard({ student, onRequestPickup, isWithinRange, schoolLocation }: StudentCardProps) {
   const [isRequesting, setIsRequesting] = useState(false);
   const [hasRequested, setHasRequested] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isCheckingLocation, setIsCheckingLocation] = useState(false);
-  const [isWithinRange, setIsWithinRange] = useState(false);
+  const [internalWithinRange, setInternalWithinRange] = useState(false);
 
   const checkLocationAndRequestPickup = async () => {
     if (hasRequested) return;
@@ -65,7 +65,7 @@ export function StudentCard({ student, onRequestPickup, schoolLocation }: Studen
         },
       );
 
-      setIsWithinRange(distance <= schoolLocation.radius);
+      setInternalWithinRange(distance <= schoolLocation.radius);
 
       if (distance <= schoolLocation.radius) {
         await handlePickupRequest(location);

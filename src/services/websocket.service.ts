@@ -100,8 +100,8 @@ class WebSocketService {
           this.reconnectAttempts = 0;
           this.isConnecting = false;
 
-          // Join user room
-          this.socket?.emit("join", userId);
+          // Join user room with payload shape expected by server
+          this.socket?.emit("join", { userId });
 
           resolve();
         });
@@ -128,7 +128,7 @@ class WebSocketService {
 
           // Rejoin user room after reconnection
           if (this.socket?.connected) {
-            this.socket.emit("join", userId);
+            this.socket.emit("join", { userId });
           }
         });
 
@@ -268,11 +268,11 @@ class WebSocketService {
 
   // Specific method for status updates to maintain compatibility with existing code
   onStatusUpdate(callback: (data: StudentStatusUpdate) => void): () => void {
-    this.on("student_status_update", callback);
+    this.on("student_status_update", callback as unknown as EventHandler);
 
     // Return unsubscribe function
     return () => {
-      this.off("student_status_update", callback);
+      this.off("student_status_update", callback as unknown as EventHandler);
     };
   }
 }

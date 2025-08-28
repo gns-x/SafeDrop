@@ -23,9 +23,4 @@ export interface StatusUpdateRequest {
   };
 }
 
-export interface StatusUpdateMessage {
-  type: "STATUS_UPDATE";
-  studentId: string;
-  grade: string;
-  status: StudentStatus;
-}
+

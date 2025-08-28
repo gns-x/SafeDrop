@@ -56,20 +56,41 @@ export async function updateStudentStatus(
   request: StatusUpdateRequest,
 ): Promise<void> {
   try {
-    await apiService.patch(`/students/${request.studentId}/status`, request);
+    // Fetch latest pickups for the student
+    const pickups = await apiService.get<any[]>(
+      `/pickups/student/${request.studentId}`,
+    );
+
+    if (!Array.isArray(pickups) || pickups.length === 0) {
+      throw new Error("No pickup records found for this student");
+    }
+
+    // Find the most recent pending pickup
+    const pending = pickups.find(
+      (p) => p.status === "PENDING" || p.status === "PARENT_ARRIVED",
+    ) || pickups[0];
+
+    if (!pending?.id) {
+      throw new Error("No valid pickup record to update");
+    }
+
+    // Map frontend student status to backend pickup status
+    const statusMap: Record<string, string> = {
+      WITH_PARENT: "PARENT_ARRIVED",
+      PENDING_PICKUP: "PENDING",
+      IN_CLASS: "CANCELLED",
+      ABSENT: "CANCELLED",
+    };
+
+    const pickupStatus = statusMap[request.status] || "PARENT_ARRIVED";
+
+    await apiService.patch(`/pickups/${pending.id}/status`, {
+      status: pickupStatus,
+    });
   } catch (error) {
     console.error("Error updating student status:", error);
     throw new Error("Failed to update student status");
   }
 }
 
-export async function requestPickup(
-  request: StatusUpdateRequest,
-): Promise<void> {
-  try {
-    await apiService.post("/pickup/request", request);
-  } catch (error) {
-    console.error("Error requesting pickup:", error);
-    throw new Error("Failed to request pickup");
-  }
-}
+

@@ -10,17 +10,14 @@ import { DashboardStats } from "../components/dashboard/DashboardStats";
 import { StudentCard } from "../components/dashboard/StudentCard";
 import { ParentNotification } from "../components/notifications/ParentNotification";
 import { SchoolLocationUpdater } from "../components/dashboard/SchoolLocationUpdater";
-import { LocationHistory } from "../components/dashboard/LocationHistory";
 import { websocketService } from "../services/websocket.service";
 import { useAuth } from "../hooks/useAuth";
-import {
-  locationManagementService,
-  LocationHistoryEntry,
-} from "../services/location-management.service";
+import { locationManagementService } from "../services/location-management.service";
 import { Button } from "../components/ui/button";
 import toast from "react-hot-toast";
 import useSound from "use-sound";
 import { Users, Settings } from "lucide-react";
+import { getCurrentLocation } from "../services/location.service";
 
 const notificationSound = "/notification.mp3";
 
@@ -32,11 +29,8 @@ export default function ParentDashboard() {
   const [playSound] = useSound(notificationSound);
   const [currentSchoolLocation, setCurrentSchoolLocation] =
     useState<SchoolLocation>(SCHOOL_LOCATION);
-  const [locationHistory, setLocationHistory] = useState<
-    LocationHistoryEntry[]
-  >([]);
-  const [isLoadingLocationHistory, setIsLoadingLocationHistory] =
-    useState(false);
+  const [parentLocation, setParentLocation] = useState<Location | null>(null);
+  // Location history removed
   const [showLocationSettings, setShowLocationSettings] = useState(false);
 
   // Redirect if not authenticated
@@ -63,6 +57,20 @@ export default function ParentDashboard() {
 
     loadStudents();
   }, [userId]);
+
+  // Fetch parent's current location once on mount
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const loc = await getCurrentLocation();
+        setParentLocation(loc);
+      } catch (e) {
+        // ignore; user may deny permissions
+        setParentLocation(null);
+      }
+    };
+    fetchLocation();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = websocketService.onStatusUpdate((data) => {
@@ -125,17 +133,6 @@ export default function ParentDashboard() {
 
       if (response.success) {
         setCurrentSchoolLocation(newLocation);
-        // Add to history
-        const historyEntry: LocationHistoryEntry = {
-          id: Date.now().toString(),
-          latitude: newLocation.latitude,
-          longitude: newLocation.longitude,
-          radius: newLocation.radius,
-          updatedBy: response.updatedBy,
-          updatedAt: response.updatedAt,
-          reason: newLocation.reason,
-        };
-        setLocationHistory((prev) => [historyEntry, ...prev]);
         toast.success("School location updated successfully! 🎉");
       }
     } catch {
@@ -143,41 +140,7 @@ export default function ParentDashboard() {
     }
   };
 
-  const loadLocationHistory = async () => {
-    setIsLoadingLocationHistory(true);
-    try {
-      // For now, we'll use mock data - replace with real API call when backend is ready
-      const mockHistory: LocationHistoryEntry[] = [
-        {
-          id: "1",
-          latitude: 33.50148021702571,
-          longitude: -7.6367796029366675,
-          radius: 500,
-          updatedBy: "Admin User",
-          updatedAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-          reason: "Initial school location setup",
-        },
-        {
-          id: "2",
-          latitude: 33.50148021702571,
-          longitude: -7.6367796029366675,
-          radius: 400,
-          updatedBy: "School Principal",
-          updatedAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-          reason: "Reduced pickup radius for safety",
-        },
-      ];
-      setLocationHistory(mockHistory);
-    } catch {
-      toast.error("Failed to load location history");
-    } finally {
-      setIsLoadingLocationHistory(false);
-    }
-  };
-
-  useEffect(() => {
-    loadLocationHistory();
-  }, []);
+  // Location history removed
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
@@ -185,7 +148,7 @@ export default function ParentDashboard() {
         userName={userName || "User"}
         isLoadingLocation={false} // isLoadingLocation is removed
         isWithinRange={isWithinRange}
-        currentLocation={null} // currentLocation is removed
+        currentLocation={parentLocation}
         onLogout={handleLogout}
       />
 
@@ -201,36 +164,23 @@ export default function ParentDashboard() {
 
         {/* Location Management Section */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                School Location Management
-              </h2>
-              <p className="text-gray-600 mt-1">
-                Configure pickup zones and safety parameters
-              </p>
-            </div>
+          <div className="flex items-center justify-end mb-4">
             <Button
               onClick={() => setShowLocationSettings(!showLocationSettings)}
-              className="px-6 py-3 rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 flex items-center space-x-2 bg-white text-gray-700 hover:bg-blue-50"
+              className="px-4 py-2 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 flex items-center space-x-2 bg-white text-gray-700"
             >
               <Settings className="w-4 h-4" />
-              <span>
-                {showLocationSettings ? "Hide Settings" : "Show Settings"}
-              </span>
+              <span>{showLocationSettings ? "Hide" : "Update Location"}</span>
             </Button>
           </div>
 
           {showLocationSettings && (
-            <div className="space-y-6">
+            <div className="space-y-4">
               <SchoolLocationUpdater
                 onLocationUpdate={handleLocationUpdate}
                 currentLocation={currentSchoolLocation}
               />
-              <LocationHistory
-                history={locationHistory}
-                isLoading={isLoadingLocationHistory}
-              />
+              {/* Location history removed */}
             </div>
           )}
         </div>
@@ -240,9 +190,9 @@ export default function ParentDashboard() {
             <StudentCard
               key={student.id}
               student={student}
-              currentLocation={null} // currentLocation is removed
+              currentLocation={parentLocation}
               onRequestPickup={() => handleRequestPickup()}
-              isWithinRange={isWithinRange(null)} // currentLocation is removed
+              isWithinRange={isWithinRange(parentLocation)}
               schoolLocation={currentSchoolLocation || SCHOOL_LOCATION}
             />
           ))}

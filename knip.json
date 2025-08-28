@@ -1,0 +1,21 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": [
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/pages/**/*.tsx",
+    "src/components/**/*.tsx"
+  ],
+  "project": ["**/*.{ts,tsx}"],
+  "ignoreDependencies": [
+    "@types/*",
+    "typescript",
+    "vite",
+    "postcss",
+    "tailwindcss",
+    "autoprefixer"
+  ],
+  "ignoreBinaries": ["vite"],
+  "ignoreWorkspaces": ["../backend"]
+}
+

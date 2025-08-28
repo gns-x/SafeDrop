@@ -41,16 +41,18 @@ interface WebSocketError {
 }
 
 export const useWebSocket = () => {
-  const { user, token } = useAuth();
+  const { userId } = useAuth();
   const [isConnected, setIsConnected] = useState(false);
   const [connectionState, setConnectionState] = useState("disconnected");
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
 
   const connect = useCallback(async () => {
-    if (!user?.id || !token) return;
+    const id = userId || localStorage.getItem("userId");
+    const token = localStorage.getItem("access_token");
+    if (!id || !token) return;
 
     try {
-      await websocketService.connect(user.id, token);
+      await websocketService.connect(id, token);
       setIsConnected(true);
       setConnectionState("connected");
     } catch (error) {
@@ -63,7 +65,7 @@ export const useWebSocket = () => {
         connect();
       }, 5000);
     }
-  }, [user?.id, token]);
+  }, [userId]);
 
   const disconnect = useCallback(() => {
     websocketService.disconnect();
@@ -189,7 +191,9 @@ export const useWebSocket = () => {
 
   // Connect when user logs in
   useEffect(() => {
-    if (user?.id && token) {
+    const id = userId || localStorage.getItem("userId");
+    const token = localStorage.getItem("access_token");
+    if (id && token) {
       connect();
     } else {
       disconnect();
@@ -198,7 +202,7 @@ export const useWebSocket = () => {
     return () => {
       disconnect();
     };
-  }, [user?.id, token, connect, disconnect]);
+  }, [userId, connect, disconnect]);
 
   // Cleanup on unmount
   useEffect(() => {
